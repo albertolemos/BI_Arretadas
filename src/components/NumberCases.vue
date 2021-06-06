@@ -50,6 +50,10 @@
           align="center"
         />
       </div>
+      <div class="showChart" v-if="showMap">
+        <h2>Número de casos no período</h2>
+        <img src="../../public/assets/chart.png" alt="chart" align="center" />
+      </div>
     </div>
     <br />
   </div>
@@ -73,6 +77,7 @@ export default {
       types: [
         { text: "Alerta", value: "getAllAlerts()" },
         { text: "Denúncia", value: "getAllComplaints()" },
+        { text: "Todos", value: "Todos" },
       ],
       allAlerts: [],
       allComplaints: [],
@@ -155,5 +160,9 @@ export default {
   display: grid;
   justify-content: center;
   padding: inherit;
+}
+
+.showChart {
+  padding-top: 3em;
 }
 </style>

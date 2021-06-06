@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <div class="box">
-      <h2>Número de casos</h2>
+      <h2>Pesquisar</h2>
       <NumberCases></NumberCases>
     </div>
     <br />
