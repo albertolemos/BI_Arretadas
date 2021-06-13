@@ -6,7 +6,7 @@
         <div class="datepicker">
           <datepicker
             placeholder=" Data Inicial"
-            v-model="periodStart"
+            v-model="initialDate"
             name="start-date"
           >
           </datepicker>
@@ -19,7 +19,7 @@
         <div class="datepicker">
           <datepicker
             placeholder=" Data Final"
-            v-model="periodEnd"
+            v-model="finalDate"
             name="end-date"
           ></datepicker>
         </div>
@@ -39,21 +39,26 @@
         <br />
 
         <div class="buttom">
-          <v-btn @click="showMap = !showMap"> Pesquisar</v-btn>
+          <v-btn @click="search()"> Pesquisar</v-btn>
         </div>
       </div>
+      <div class="listaAlerts">
+        <h3>Alertas:</h3>
+        <ol>
+          <li v-for="alert in alerts" :key="alert._id">
+            Latitude: {{ alert.latitude }} - Longitude:{{ alert.longitude }}
+          </li>
+        </ol>
+        <br />
+        <h3>Denuncias:</h3>
+        <ol>
+          <li v-for="complaint in complaints" :key="complaint._id">
+            Latitude: {{ complaint.latitude }} - Longitude:
+            {{ complaint.longitude }}
+          </li>
+        </ol>
+      </div>
       <br />
-      <div class="showMap" v-if="showMap">
-        <img
-          src="https://i.ibb.co/w0jgPZ8/pontos.webp"
-          alt="map"
-          align="center"
-        />
-      </div>
-      <div class="showChart" v-if="showMap">
-        <h2>Número de casos no período</h2>
-        <img src="../../public/assets/chart.png" alt="chart" align="center" />
-      </div>
     </div>
     <br />
   </div>
@@ -70,24 +75,23 @@ export default {
   },
   data() {
     return {
-      periodStart: "",
-      periodEnd: "",
+      initialDate: "",
+      finalDate: "",
       token: "",
       selectedType: "",
       types: [
-        { text: "Alerta", value: "getAllAlerts()" },
-        { text: "Denúncia", value: "getAllComplaints()" },
+        { text: "Alerta", value: "alerta" },
+        { text: "Denúncia", value: "denuncia" },
         { text: "Todos", value: "Todos" },
       ],
-      allAlerts: [],
-      allComplaints: [],
-      showMap: false,
+      alerts: [],
+      complaints: [],
     };
   },
 
   async mounted() {
-    this.token = localStorage.getItem("token");
-    if (!this.token || this.token == "null") {
+    this.token = sessionStorage.getItem("token");
+    if (!this.token) {
       await axios
         .post("https://arretadas-api.herokuapp.com/user/authenticate", {
           nickname: "admin",
@@ -96,30 +100,27 @@ export default {
         .then((response) => (this.token = response.data.token))
         // eslint-disable-next-line no-console
         .catch((err) => console.log(err));
-      localStorage.setItem("token", this.token);
+      sessionStorage.setItem("token", this.token);
     }
   },
   methods: {
-    getAllAlerts: async function () {
+    search: async function () {
       await axios
         .get("https://arretadas-api.herokuapp.com/alert", {
           params: {
             token: this.token,
           },
         })
-        .then((response) => (this.allAlerts = response.data))
+        .then((response) => (this.alerts = response.data))
         // eslint-disable-next-line
         .catch((err) => console.log(err));
-    },
-
-    getAllComplaints: async function () {
       await axios
         .get("https://arretadas-api.herokuapp.com/complaint", {
           params: {
             token: this.token,
           },
         })
-        .then((response) => (this.allComplaints = response.data))
+        .then((response) => (this.complaints = response.data))
         // eslint-disable-next-line no-console
         .catch((err) => console.log(err));
     },
