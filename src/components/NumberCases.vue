@@ -13,7 +13,7 @@
         </div>
 
         <!-- Fazer a validacao dos campos antes de enviar -->
-        <!-- Mostrar mapa de calor ao inves de grafico pizza -->
+        <!-- Mostrar mapa de calor e grafico pizza -->
         <strong> Até </strong>
 
         <div class="datepicker">
@@ -41,22 +41,6 @@
         <div class="buttom">
           <v-btn @click="search()"> Pesquisar</v-btn>
         </div>
-      </div>
-      <div class="listaAlerts">
-        <h3>Alertas:</h3>
-        <ol>
-          <li v-for="alert in alerts" :key="alert._id">
-            Latitude: {{ alert.latitude }} - Longitude:{{ alert.longitude }}
-          </li>
-        </ol>
-        <br />
-        <h3>Denuncias:</h3>
-        <ol>
-          <li v-for="complaint in complaints" :key="complaint._id">
-            Latitude: {{ complaint.latitude }} - Longitude:
-            {{ complaint.longitude }}
-          </li>
-        </ol>
       </div>
       <br />
     </div>
@@ -111,7 +95,18 @@ export default {
             token: this.token,
           },
         })
-        .then((response) => (this.alerts = response.data))
+        .then(
+          (response) =>
+            (this.alerts = response.data.map(function (el) {
+              return {
+                date: el.date,
+                coordinates: {
+                  latitude: el.latitude,
+                  longitude: el.longitude,
+                },
+              };
+            }))
+        )
         // eslint-disable-next-line
         .catch((err) => console.log(err));
       await axios
@@ -120,9 +115,32 @@ export default {
             token: this.token,
           },
         })
-        .then((response) => (this.complaints = response.data))
+        .then(
+          (response) =>
+            (this.complaints = response.data.map(function (el) {
+              return {
+                date: el.date,
+                coordinates: {
+                  latitude: el.latitude,
+                  longitude: el.longitude,
+                },
+              };
+            }))
+        )
         // eslint-disable-next-line no-console
         .catch((err) => console.log(err));
+      // eslint-disable-next-line
+      console.log(this.initialDate, this.finalDate);
+
+      // Fazer o filtro de datas (data inicial e final)
+
+      // this.complaints = this.complaints.filter(filterByDate);
+      // function filterByDate(el) {
+      //   el.date.valueOf() > this.initialDate.valueOf() &&
+      //   el.date.valueOf() < this.finalDate.valueOf()
+      //     ? true
+      //     : false;
+      // }
     },
   },
 };
