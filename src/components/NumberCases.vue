@@ -7,7 +7,8 @@
           <datepicker
             placeholder=" Data Inicial"
             v-model="initialDate"
-            name="start-date"
+            :format="customFormatterDate"
+            :language="ptBR"
           >
           </datepicker>
         </div>
@@ -20,7 +21,8 @@
           <datepicker
             placeholder=" Data Final"
             v-model="finalDate"
-            name="end-date"
+            :format="customFormatterDate"
+            :language="ptBR"
           ></datepicker>
         </div>
       </div>
@@ -51,6 +53,8 @@
 <script>
 import axios from "axios";
 import Datepicker from "vuejs-datepicker";
+import { ptBR } from "vuejs-datepicker/dist/locale";
+import moment from "moment";
 
 export default {
   name: "numberCases",
@@ -59,8 +63,10 @@ export default {
   },
   data() {
     return {
+      ptBR: ptBR,
       initialDate: "",
       finalDate: "",
+      periodo: "",
       token: "",
       selectedType: "",
       types: [
@@ -88,6 +94,9 @@ export default {
     }
   },
   methods: {
+    customFormatterDate(date) {
+      return moment(date).format("DD-MMM-yyyy");
+    },
     search: async function () {
       await axios
         .get("https://arretadas-api.herokuapp.com/alert", {
@@ -99,7 +108,7 @@ export default {
           (response) =>
             (this.alerts = response.data.map(function (el) {
               return {
-                date: el.date,
+                date: moment(el.date).format("DD-MMM-YYYY"),
                 coordinates: {
                   latitude: el.latitude,
                   longitude: el.longitude,
@@ -119,7 +128,7 @@ export default {
           (response) =>
             (this.complaints = response.data.map(function (el) {
               return {
-                date: el.date,
+                date: moment(el.date).format("DD-MMM-YYYY"),
                 coordinates: {
                   latitude: el.latitude,
                   longitude: el.longitude,
