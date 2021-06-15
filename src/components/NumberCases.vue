@@ -9,6 +9,7 @@
             v-model="initialDate"
             :format="customFormatterDate"
             :language="ptBR"
+            min="0"
           >
           </datepicker>
         </div>
@@ -23,7 +24,9 @@
             v-model="finalDate"
             :format="customFormatterDate"
             :language="ptBR"
-          ></datepicker>
+            min="0"
+          >
+          </datepicker>
         </div>
       </div>
       <br />
@@ -33,7 +36,7 @@
           <strong>Tipo:</strong>
           <select class="typeSelect" v-model="selectedType">
             <option value="" disabled>Escolha</option>
-            <option v-for="(type, key) in types" :key="type.value" :value="key">
+            <option v-for="type in types" :key="type.value">
               {{ type.text }}
             </option>
           </select>
@@ -66,13 +69,11 @@ export default {
       ptBR: ptBR,
       initialDate: "",
       finalDate: "",
-      periodo: "",
       token: "",
       selectedType: "",
       types: [
         { text: "Alerta", value: "alerta" },
         { text: "Denúncia", value: "denuncia" },
-        { text: "Todos", value: "Todos" },
       ],
       alerts: [],
       complaints: [],
@@ -138,18 +139,8 @@ export default {
         )
         // eslint-disable-next-line no-console
         .catch((err) => console.log(err));
-      // eslint-disable-next-line
-      console.log(this.initialDate, this.finalDate);
 
       // Fazer o filtro de datas (data inicial e final)
-
-      // this.complaints = this.complaints.filter(filterByDate);
-      // function filterByDate(el) {
-      //   el.date.valueOf() > this.initialDate.valueOf() &&
-      //   el.date.valueOf() < this.finalDate.valueOf()
-      //     ? true
-      //     : false;
-      // }
     },
   },
 };
