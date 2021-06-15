@@ -2,7 +2,7 @@
   <div>
     <div class="container">
       <div class="period">
-        <strong class="date"> Período: </strong>
+        <strong class="date"> Período*: </strong>
         <div class="datepicker">
           <datepicker
             placeholder=" Data Inicial"
@@ -14,9 +14,8 @@
           </datepicker>
         </div>
 
-        <!-- Fazer a validacao dos campos antes de enviar -->
         <!-- Mostrar mapa de calor e grafico pizza -->
-        <strong> Até </strong>
+        <strong> Até* </strong>
 
         <div class="datepicker">
           <datepicker
@@ -33,7 +32,7 @@
 
       <div id="types">
         <div class="selectType">
-          <strong>Tipo:</strong>
+          <strong>Tipo*:</strong>
           <select class="typeSelect" v-model="selectedType">
             <option value="" disabled>Escolha</option>
             <option v-for="type in types" :key="type.value">
@@ -48,6 +47,14 @@
         </div>
       </div>
       <br />
+      <p v-if="errors.length">
+        <b>Por favor, corrija o(s) seguinte(s) erro(s):</b>
+        <ul>
+          <li v-for="error in errors" :key="error">{{ error }}</li>
+        </ul>
+      </p>
+      <br />
+    <small>* Campos obrigatórios</small>
     </div>
     <br />
   </div>
@@ -77,6 +84,7 @@ export default {
       ],
       alerts: [],
       complaints: [],
+      errors: [],
     };
   },
 
@@ -99,48 +107,57 @@ export default {
       return moment(date).format("DD-MMM-yyyy");
     },
     search: async function () {
-      await axios
-        .get("https://arretadas-api.herokuapp.com/alert", {
-          params: {
-            token: this.token,
-          },
-        })
-        .then(
-          (response) =>
-            (this.alerts = response.data.map(function (el) {
-              return {
-                date: moment(el.date).format("DD-MMM-YYYY"),
-                coordinates: {
-                  latitude: el.latitude,
-                  longitude: el.longitude,
-                },
-              };
-            }))
-        )
-        // eslint-disable-next-line
-        .catch((err) => console.log(err));
-      await axios
-        .get("https://arretadas-api.herokuapp.com/complaint", {
-          params: {
-            token: this.token,
-          },
-        })
-        .then(
-          (response) =>
-            (this.complaints = response.data.map(function (el) {
-              return {
-                date: moment(el.date).format("DD-MMM-YYYY"),
-                coordinates: {
-                  latitude: el.latitude,
-                  longitude: el.longitude,
-                },
-              };
-            }))
-        )
-        // eslint-disable-next-line no-console
-        .catch((err) => console.log(err));
+      this.errors = [];
+      if (this.initialDate === "") {
+        this.errors.push("Favor preencher o campo data inicial!");
+      } else if (this.finalDate === "") {
+        this.errors.push("Favor preencher o campo data final!");
+      } else if (this.selectedType === "") {
+        this.errors.push("Favor escolher o tipo!");
+      } else {
+        await axios
+          .get("https://arretadas-api.herokuapp.com/alert", {
+            params: {
+              token: this.token,
+            },
+          })
+          .then(
+            (response) =>
+              (this.alerts = response.data.map(function (el) {
+                return {
+                  date: moment(el.date).format("DD-MMM-YYYY"),
+                  coordinates: {
+                    latitude: el.latitude,
+                    longitude: el.longitude,
+                  },
+                };
+              }))
+          )
+          // eslint-disable-next-line
+          .catch((err) => console.log(err));
+        await axios
+          .get("https://arretadas-api.herokuapp.com/complaint", {
+            params: {
+              token: this.token,
+            },
+          })
+          .then(
+            (response) =>
+              (this.complaints = response.data.map(function (el) {
+                return {
+                  date: moment(el.date).format("DD-MMM-YYYY"),
+                  coordinates: {
+                    latitude: el.latitude,
+                    longitude: el.longitude,
+                  },
+                };
+              }))
+          )
+          // eslint-disable-next-line no-console
+          .catch((err) => console.log(err));
 
-      // Fazer o filtro de datas (data inicial e final)
+        // Fazer o filtro de datas (data inicial e final)
+      }
     },
   },
 };
