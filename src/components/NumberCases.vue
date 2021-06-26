@@ -7,7 +7,7 @@
           <datepicker
             placeholder=" Data Inicial"
             v-model="initialDate"
-            :format="customFormatterDate"
+            :format="customFormatter"
             :language="ptBR"
             min="0"
           >
@@ -21,7 +21,7 @@
           <datepicker
             placeholder=" Data Final"
             v-model="finalDate"
-            :format="customFormatterDate"
+            :format="customFormatter"
             :language="ptBR"
             min="0"
           >
@@ -100,8 +100,8 @@ export default {
     }
   },
   methods: {
-    customFormatterDate(date) {
-      return moment(date).format("DD-MMM-yyyy");
+    customFormatter(date) {
+      return moment(date).format("DD/MM/YYYY");
     },
     search: async function () {
       this.errors = [];
@@ -112,46 +112,47 @@ export default {
       } else if (this.selectedType === "") {
         this.errors.push("Favor escolher o tipo!");
       } else {
-        await axios
-          .get("https://arretadas-api.herokuapp.com/alert", {
-            params: {
-              token: this.token,
-            },
-          })
-          .then(
-            (response) =>
-              (this.alerts = response.data.map(function (el) {
-                return {
-                  date: moment(el.date).format("DD-MMM-YYYY"),
-                  coordinates: {
-                    latitude: el.latitude,
-                    longitude: el.longitude,
-                  },
-                };
-              }))
-          )
-          // eslint-disable-next-line
-          .catch((err) => console.log(err));
-        await axios
-          .get("https://arretadas-api.herokuapp.com/complaint", {
-            params: {
-              token: this.token,
-            },
-          })
-          .then(
-            (response) =>
-              (this.complaints = response.data.map(function (el) {
-                return {
-                  date: moment(el.date).format("DD-MMM-YYYY"),
-                  coordinates: {
-                    latitude: el.latitude,
-                    longitude: el.longitude,
-                  },
-                };
-              }))
-          )
-          // eslint-disable-next-line no-console
-          .catch((err) => console.log(err));
+        this.selectedType === "Alerta"
+          ? await axios
+              .get("https://arretadas-api.herokuapp.com/alert", {
+                params: {
+                  token: this.token,
+                },
+              })
+              .then(
+                (response) =>
+                  (this.alerts = response.data.map((el) => {
+                    return {
+                      date: moment(el.date).format("DD-MM-YYYY"),
+                      coordinates: {
+                        latitude: el.latitude,
+                        longitude: el.longitude,
+                      },
+                    };
+                  }))
+              )
+              // eslint-disable-next-line
+              .catch((err) => console.log(err))
+          : await axios
+              .get("https://arretadas-api.herokuapp.com/complaint", {
+                params: {
+                  token: this.token,
+                },
+              })
+              .then(
+                (response) =>
+                  (this.complaints = response.data.map((el) => {
+                    return {
+                      date: moment(el.date).format("DD-MM-YYYY"),
+                      coordinates: {
+                        latitude: el.latitude,
+                        longitude: el.longitude,
+                      },
+                    };
+                  }))
+              )
+              // eslint-disable-next-line no-console
+              .catch((err) => console.log(err));
 
         // Fazer o filtro de datas (data inicial e final)
       }
