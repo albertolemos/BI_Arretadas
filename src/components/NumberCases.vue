@@ -16,10 +16,8 @@
           </div>
         </div>
 
-        <!-- Mostrar mapa de calor e grafico pizza -->
-
         <div class="flex items-center">
-          <p> Até* </p>
+          <p>Até*</p>
           <div class="datepicker">
             <datepicker
               placeholder=" Data Final"
@@ -36,11 +34,11 @@
 
       <v-combobox
         class="mb-4"
-          v-model="selectedType"
-          :items="types"
-          label="Selecione um tipo de ocorrência*"
-        ></v-combobox>
-      
+        v-model="selectedType"
+        :items="types"
+        label="Selecione um tipo de ocorrência*"
+      ></v-combobox>
+
       <div class="buttom">
         <v-btn @click="search()"> Pesquisar</v-btn>
       </div>
@@ -58,7 +56,7 @@
 import Datepicker from "vuejs-datepicker";
 import { ptBR } from "vuejs-datepicker/dist/locale";
 import moment from "moment";
-import { authenticate } from '@/services/authentication'
+import { authenticate } from "@/services/authentication";
 
 export default {
   name: "numberCases",
@@ -72,7 +70,7 @@ export default {
       finalDate: "",
       token: "",
       selectedType: "",
-      types: ['Alertas', 'Denúncias'],
+      types: ["Alertas", "Denúncias"],
       alerts: [],
       complaints: [],
       errors: [],
@@ -82,7 +80,7 @@ export default {
   async mounted() {
     this.token = sessionStorage.getItem("token");
     if (!this.token) {
-      this.authenticateUser()
+      this.authenticateUser();
     }
   },
   methods: {
@@ -90,23 +88,26 @@ export default {
       return moment(date).format("YYYY-MM-DD");
     },
     logoutUser() {
-      sessionStorage.removeItem('token')
-      this.authenticateUser()
+      sessionStorage.removeItem("token");
+      this.authenticateUser();
     },
     async authenticateUser() {
       await authenticate({
         nickname: "admin",
         password: "arretadas123",
       })
-      .then((response) => {
-        const { token } = response.data
-        this.$api.defaults.headers.common['Authorization'] = `Bearer ${token}`
-        sessionStorage.setItem("token", `Bearer ${token}`);
-      })
-      .catch(() => this.errors.push("Erro ao tentar realizar operação"));
+        .then((response) => {
+          const { token } = response.data;
+          this.$api.defaults.headers.common[
+            "Authorization"
+          ] = `Bearer ${token}`;
+          sessionStorage.setItem("token", `Bearer ${token}`);
+        })
+        .catch(() => this.errors.push("Erro ao tentar realizar operação"));
     },
     async getAlertas(date) {
-      await this.$api.get(`/alert?init=${date.init}&final=${date.final}`)
+      await this.$api
+        .get(`/alert?init=${date.init}&final=${date.final}`)
         .then(
           (response) =>
             (this.alerts = response.data.map((el) => {
@@ -119,10 +120,11 @@ export default {
               };
             }))
         )
-        .catch(() => (this.logoutUser()));
+        .catch(() => this.logoutUser());
     },
     async getComplaints(date) {
-      await this.$api.get(`/complaint?init=${date.init}&final=${date.final}`)
+      await this.$api
+        .get(`/complaint?init=${date.init}&final=${date.final}`)
         .then(
           (response) =>
             (this.complaints = response.data.map((el) => {
@@ -135,36 +137,36 @@ export default {
               };
             }))
         )
-        .catch(() => (this.logoutUser()));
+        .catch(() => this.logoutUser());
     },
     search() {
       this.errors = [];
 
       if (this.initialDate === "") {
         this.errors.push("Favor preencher o campo data inicial!");
-        return
+        return;
       }
-      
+
       if (this.finalDate === "") {
         this.errors.push("Favor preencher o campo data final!");
-        return
+        return;
       }
-      
+
       if (this.selectedType === "") {
         this.errors.push("Favor escolher o tipo!");
-        return
+        return;
       }
 
       const dates = {
         init: this.customFormatter(this.initialDate),
-        final: this.customFormatter(this.finalDate)
-      }
-      
+        final: this.customFormatter(this.finalDate),
+      };
+
       this.selectedType === "Alerta"
         ? this.getAlertas(dates)
-        : this.getComplaints(dates)
-      }
+        : this.getComplaints(dates);
     },
+  },
 };
 </script>
 
