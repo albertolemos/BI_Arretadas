@@ -40,15 +40,6 @@
           :items="types"
           label="Selecione um tipo de ocorrência*"
         ></v-combobox>
-
-      <!-- <div id="types">
-        <select v-model="selectedType">
-          <option value="" disabled>Escolha</option>
-          <option v-for="type in types" :key="type.value">
-            {{ type.text }}
-          </option>
-        </select>
-      </div> -->
       
       <div class="buttom">
         <v-btn @click="search()"> Pesquisar</v-btn>
@@ -214,6 +205,8 @@ export default {
 
 .buttom {
   margin-left: 20px;
+  display: flex;
+  justify-content: center;
 }
 
 .showMap {
