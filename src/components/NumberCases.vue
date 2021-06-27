@@ -17,7 +17,7 @@
         </div>
 
         <div class="flex items-center">
-          <p>Até*</p>
+          <strong>Até*</strong>
           <div class="datepicker">
             <datepicker
               placeholder=" Data Final"
