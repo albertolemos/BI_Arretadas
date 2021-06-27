@@ -1,52 +1,59 @@
 <template>
-  <div>
+  <v-container>
     <div class="container">
-      <div class="period">
-        <strong class="date"> Período*: </strong>
-        <div class="datepicker">
-          <datepicker
-            placeholder=" Data Inicial"
-            v-model="initialDate"
-            :format="customFormatter"
-            :language="ptBR"
-            min="0"
-          >
-          </datepicker>
+      <div class="flex">
+        <div class="flex items-center">
+          <strong class="date"> Período*: </strong>
+          <div class="datepicker">
+            <datepicker
+              placeholder=" Data Inicial"
+              v-model="initialDate"
+              :format="customFormatter"
+              :language="ptBR"
+              min="0"
+            >
+            </datepicker>
+          </div>
         </div>
 
         <!-- Mostrar mapa de calor e grafico pizza -->
-        <strong> Até* </strong>
 
-        <div class="datepicker">
-          <datepicker
-            placeholder=" Data Final"
-            v-model="finalDate"
-            :format="customFormatter"
-            :language="ptBR"
-            min="0"
-          >
-          </datepicker>
+        <div class="flex items-center">
+          <p> Até* </p>
+          <div class="datepicker">
+            <datepicker
+              placeholder=" Data Final"
+              v-model="finalDate"
+              :format="customFormatter"
+              :language="ptBR"
+              min="0"
+            >
+            </datepicker>
+          </div>
         </div>
       </div>
       <br />
 
-      <div id="types">
-        <div class="selectType">
-          <strong>Tipo*:</strong>
-          <select class="typeSelect" v-model="selectedType">
-            <option value="" disabled>Escolha</option>
-            <option v-for="type in types" :key="type.value">
-              {{ type.text }}
-            </option>
-          </select>
-        </div>
-        <br />
+      <v-combobox
+        class="mb-4"
+          v-model="selectedType"
+          :items="types"
+          label="Selecione um tipo de ocorrência*"
+        ></v-combobox>
 
-        <div class="buttom">
-          <v-btn @click="search()"> Pesquisar</v-btn>
-        </div>
+      <!-- <div id="types">
+        <select v-model="selectedType">
+          <option value="" disabled>Escolha</option>
+          <option v-for="type in types" :key="type.value">
+            {{ type.text }}
+          </option>
+        </select>
+      </div> -->
+      
+      <div class="buttom">
+        <v-btn @click="search()"> Pesquisar</v-btn>
       </div>
-      <br />
+
       <div v-if="errors.length">
         <p v-for="error in errors" :key="error">{{ error }}</p>
       </div>
@@ -54,7 +61,7 @@
       <small>* Campos obrigatórios</small>
     </div>
     <br />
-  </div>
+  </v-container>
 </template>
 
 <script>
@@ -75,10 +82,7 @@ export default {
       finalDate: "",
       token: "",
       selectedType: "",
-      types: [
-        { text: "Alerta", value: "alerta" },
-        { text: "Denúncia", value: "denuncia" },
-      ],
+      types: ['Alertas', 'Denúncias'],
       alerts: [],
       complaints: [],
       errors: [],
@@ -179,14 +183,23 @@ export default {
   display: grid;
   justify-content: center;
 }
-.period {
+.flex {
   display: flex;
-  padding-bottom: 5px;
 }
+
+.items-center {
+  align-items: center;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
 .datepicker {
   margin-left: 10px;
   margin-right: 10px;
-  border: solid 1px;
+  border-bottom: solid 1px #9e9e9e;
+  padding: 5px;
 }
 
 .typeSelect {
