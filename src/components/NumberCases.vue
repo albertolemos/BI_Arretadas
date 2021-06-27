@@ -3,10 +3,10 @@
     <div class="container">
       <div class="flex">
         <div class="flex items-center">
-          <strong class="date"> Período*: </strong>
+          <strong class="date"> Período: </strong>
           <div class="datepicker">
             <datepicker
-              placeholder=" Data Inicial"
+              placeholder="Data Inicial*"
               v-model="initialDate"
               :format="customFormatter"
               :language="ptBR"
@@ -17,10 +17,10 @@
         </div>
 
         <div class="flex items-center">
-          <strong>Até*</strong>
+          <strong>Até</strong>
           <div class="datepicker">
             <datepicker
-              placeholder=" Data Final"
+              placeholder="Data Final*"
               v-model="finalDate"
               :format="customFormatter"
               :language="ptBR"
@@ -36,15 +36,17 @@
         class="mb-4"
         v-model="selectedType"
         :items="types"
-        label="Selecione um tipo de ocorrência*"
+        label="Tipo de ocorrência*"
       ></v-combobox>
+
+      <div v-if="errors.length">
+        <p v-for="error in errors" :key="error">
+          <strong>{{ error }} </strong>
+        </p>
+      </div>
 
       <div class="buttom">
         <v-btn @click="search()"> Pesquisar</v-btn>
-      </div>
-
-      <div v-if="errors.length">
-        <p v-for="error in errors" :key="error">{{ error }}</p>
       </div>
       <br />
       <small>* Campos obrigatórios</small>
@@ -97,15 +99,15 @@ export default {
         password: "arretadas123",
       })
         .then((response) => {
-          const { token } = response.data;
+          this.token = response.data;
           this.$api.defaults.headers.common[
             "Authorization"
-          ] = `Bearer ${token}`;
-          sessionStorage.setItem("token", `Bearer ${token}`);
+          ] = `Bearer ${this.token}`;
+          sessionStorage.setItem("token", `Bearer ${this.token}`);
         })
         .catch(() => this.errors.push("Erro ao tentar realizar operação"));
     },
-    async getAlertas(date) {
+    async getAlerts(date) {
       await this.$api
         .get(`/alert?init=${date.init}&final=${date.final}`)
         .then(
@@ -153,7 +155,7 @@ export default {
       }
 
       if (this.selectedType === "") {
-        this.errors.push("Favor escolher o tipo!");
+        this.errors.push("Favor escolher o tipo de ocorrência!");
         return;
       }
 
@@ -162,8 +164,8 @@ export default {
         final: this.customFormatter(this.finalDate),
       };
 
-      this.selectedType === "Alerta"
-        ? this.getAlertas(dates)
+      this.selectedType === "Alertas"
+        ? this.getAlerts(dates)
         : this.getComplaints(dates);
     },
   },
@@ -184,7 +186,7 @@ export default {
 }
 
 .mb-4 {
-  margin-bottom: 1rem;
+  margin-bottom: 100px;
 }
 
 .datepicker {
@@ -205,7 +207,7 @@ export default {
 }
 
 .buttom {
-  margin-left: 20px;
+  margin: 1rem;
   display: flex;
   justify-content: center;
 }
