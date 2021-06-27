@@ -58,10 +58,10 @@
 </template>
 
 <script>
-import axios from "axios";
 import Datepicker from "vuejs-datepicker";
 import { ptBR } from "vuejs-datepicker/dist/locale";
 import moment from "moment";
+import { authenticate } from '@/services/authentication'
 
 export default {
   name: "numberCases",
@@ -88,76 +88,89 @@ export default {
   async mounted() {
     this.token = sessionStorage.getItem("token");
     if (!this.token) {
-      await axios
-        .post("https://arretadas-api.herokuapp.com/user/authenticate", {
-          nickname: "admin",
-          password: "arretadas123",
-        })
-        .then((response) => (this.token = response.data.token))
-        // eslint-disable-next-line no-console
-        .catch((err) => console.log(err));
-      sessionStorage.setItem("token", this.token);
+      this.authenticateUser()
     }
   },
   methods: {
     customFormatter(date) {
-      return moment(date).format("DD/MM/YYYY");
+      return moment(date).format("YYYY-MM-DD");
     },
-    search: async function () {
+    logoutUser() {
+      sessionStorage.removeItem('token')
+      this.authenticateUser()
+    },
+    async authenticateUser() {
+      await authenticate({
+        nickname: "admin",
+        password: "arretadas123",
+      })
+      .then((response) => {
+        const { token } = response.data
+        this.$api.defaults.headers.common['Authorization'] = `Bearer ${token}`
+        sessionStorage.setItem("token", `Bearer ${token}`);
+      })
+      .catch(() => this.errors.push("Erro ao tentar realizar operação"));
+    },
+    async getAlertas(date) {
+      await this.$api.get(`/alert?init=${date.init}&final=${date.final}`)
+        .then(
+          (response) =>
+            (this.alerts = response.data.map((el) => {
+              return {
+                date: moment(el.date).format("DD-MM-YYYY"),
+                coordinates: {
+                  latitude: el.latitude,
+                  longitude: el.longitude,
+                },
+              };
+            }))
+        )
+        .catch(() => (this.logoutUser()));
+    },
+    async getComplaints(date) {
+      await this.$api.get(`/complaint?init=${date.init}&final=${date.final}`)
+        .then(
+          (response) =>
+            (this.complaints = response.data.map((el) => {
+              return {
+                date: moment(el.date).format("DD-MM-YYYY"),
+                coordinates: {
+                  latitude: el.latitude,
+                  longitude: el.longitude,
+                },
+              };
+            }))
+        )
+        .catch(() => (this.logoutUser()));
+    },
+    search() {
       this.errors = [];
+
       if (this.initialDate === "") {
         this.errors.push("Favor preencher o campo data inicial!");
-      } else if (this.finalDate === "") {
+        return
+      }
+      
+      if (this.finalDate === "") {
         this.errors.push("Favor preencher o campo data final!");
-      } else if (this.selectedType === "") {
+        return
+      }
+      
+      if (this.selectedType === "") {
         this.errors.push("Favor escolher o tipo!");
-      } else {
-        this.selectedType === "Alerta"
-          ? await axios
-              .get("https://arretadas-api.herokuapp.com/alert", {
-                params: {
-                  token: this.token,
-                },
-              })
-              .then(
-                (response) =>
-                  (this.alerts = response.data.map((el) => {
-                    return {
-                      date: moment(el.date).format("DD-MM-YYYY"),
-                      coordinates: {
-                        latitude: el.latitude,
-                        longitude: el.longitude,
-                      },
-                    };
-                  }))
-              )
-              // eslint-disable-next-line
-              .catch((err) => console.log(err))
-          : await axios
-              .get("https://arretadas-api.herokuapp.com/complaint", {
-                params: {
-                  token: this.token,
-                },
-              })
-              .then(
-                (response) =>
-                  (this.complaints = response.data.map((el) => {
-                    return {
-                      date: moment(el.date).format("DD-MM-YYYY"),
-                      coordinates: {
-                        latitude: el.latitude,
-                        longitude: el.longitude,
-                      },
-                    };
-                  }))
-              )
-              // eslint-disable-next-line no-console
-              .catch((err) => console.log(err));
+        return
+      }
 
-        // Fazer o filtro de datas (data inicial e final)
+      const dates = {
+        init: this.customFormatter(this.initialDate),
+        final: this.customFormatter(this.finalDate)
+      }
+      
+      this.selectedType === "Alerta"
+        ? this.getAlertas(dates)
+        : this.getComplaints(dates)
       }
     },
-  },
 };
 </script>
 
