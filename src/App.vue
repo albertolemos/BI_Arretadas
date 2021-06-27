@@ -1,12 +1,12 @@
 <template>
-  <div class="home">
+  <v-app>
     <div class="box">
       <h2>Pesquisar</h2>
       <NumberCases></NumberCases>
     </div>
     <br />
     <Footer></Footer>
-  </div>
+  </v-app>
 </template>
 
 <script>
