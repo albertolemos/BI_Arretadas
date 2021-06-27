@@ -1,0 +1,30 @@
+<template>
+  <header class="header">
+    <img src="../assets/logo.png" alt="Logo arretadas">
+    <p class="title">Relatórios</p>
+  </header>
+</template>
+
+<script>
+export default {
+  name: "ArretadasHeader"
+}
+</script>
+
+<style scoped>
+.header {
+  background-color: #00d1b2;
+  padding: 1rem 10rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title {
+  font-size: 2.5rem;
+}
+
+img {
+  height: 70px;
+}
+</style>

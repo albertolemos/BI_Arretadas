@@ -1,10 +1,10 @@
 <template>
   <v-app>
+    <ArretadasHeader />
     <div class="box">
       <h2>Pesquisar</h2>
       <NumberCases></NumberCases>
     </div>
-    <br />
     <Footer></Footer>
   </v-app>
 </template>
@@ -13,6 +13,7 @@
 import vuetify from "../src/plugins/vuetify";
 import NumberCases from "./components/NumberCases";
 import Footer from "./components/Footer";
+import ArretadasHeader from "./components/ArretadasHeader";
 
 export default {
   name: "app",
@@ -20,11 +21,16 @@ export default {
   components: {
     NumberCases,
     Footer,
+    ArretadasHeader
   },
 };
 </script>
 
 <style >
+.box {
+  margin: 2rem 0 auto;
+}
+
 .box h2 {
   text-align: center;
   font-weight: bold;

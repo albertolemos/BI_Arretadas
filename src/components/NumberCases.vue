@@ -51,7 +51,6 @@
       <br />
       <small>* Campos obrigatórios</small>
     </div>
-    <br />
   </v-container>
 </template>
 
