@@ -7,8 +7,8 @@
 
       <v-card-text class="white--text">
         <p>&copy;</p>
-        {{ new Date().getFullYear() }}
-        <strong> Arretadas — IFPE Campus Garanhuns. </strong>
+        <p>{{ new Date().getFullYear() }}</p>
+        <p><strong> Arretadas — IFPE Campus Garanhuns. </strong></p>
         <p>Todos os direitos reservados.</p>
       </v-card-text>
     </v-card>
@@ -27,14 +27,6 @@ export default {
 </script>
 
 <style scoped>
-.flex .mx-4 {
-  background-color: #00d1b2;
-  position: relative;
-  bottom: 0;
-  left: 0;
-  right: 0;
-}
-
 .subheading {
   color: #fff;
 }
