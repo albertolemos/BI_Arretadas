@@ -22,6 +22,7 @@ export default {
 
 .title {
   font-size: 2.5rem;
+  color: #fff;
 }
 
 img {
