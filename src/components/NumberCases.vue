@@ -99,13 +99,15 @@ export default {
         password: "arretadas123",
       })
         .then((response) => {
-          this.token = response.data;
+          this.token = response.data.token;
           this.$api.defaults.headers.common[
             "Authorization"
           ] = `Bearer ${this.token}`;
           sessionStorage.setItem("token", `Bearer ${this.token}`);
         })
-        .catch(() => this.errors.push("Erro ao tentar realizar operação"));
+        .catch(() =>
+          this.errors.push("Erro ao tentar realizar autenticação do usuário")
+        );
     },
     async getAlerts(date) {
       await this.$api
