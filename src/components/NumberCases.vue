@@ -117,10 +117,7 @@ export default {
             (this.alerts = response.data.map((el) => {
               return {
                 date: moment(el.date).format("DD-MM-YYYY"),
-                coordinates: {
-                  latitude: el.latitude,
-                  longitude: el.longitude,
-                },
+                district: el.district,
               };
             }))
         )
@@ -134,10 +131,7 @@ export default {
             (this.complaints = response.data.map((el) => {
               return {
                 date: moment(el.date).format("DD-MM-YYYY"),
-                coordinates: {
-                  latitude: el.latitude,
-                  longitude: el.longitude,
-                },
+                district: el.district,
               };
             }))
         )
