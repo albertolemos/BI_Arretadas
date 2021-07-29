@@ -46,7 +46,7 @@
       </div>
 
       <div class="buttom">
-        <v-btn @click="search()"> Pesquisar</v-btn>
+        <v-btn @click="search()">Buscar</v-btn>
       </div>
       <br />
       <small>* Campos obrigatórios</small>
