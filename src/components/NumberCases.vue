@@ -8,7 +8,7 @@
             <datepicker
               placeholder="Data Inicial*"
               v-model="initialDate"
-              :format="customFormatter"
+              :format="customFormatterDate"
               :language="ptBR"
               min="0"
             >
@@ -22,7 +22,7 @@
             <datepicker
               placeholder="Data Final*"
               v-model="finalDate"
-              :format="customFormatter"
+              :format="customFormatterDate"
               :language="ptBR"
               min="0"
             >
@@ -47,6 +47,7 @@
 
       <div class="buttom">
         <v-btn @click="search()">Buscar</v-btn>
+        <v-btn @click="cleaner()">Limpar</v-btn>
       </div>
       <br />
       <small>* Campos obrigatórios</small>
@@ -86,8 +87,8 @@ export default {
     }
   },
   methods: {
-    customFormatter(date) {
-      return moment(date).format("YYYY-MM-DD");
+    customFormatterDate(date) {
+      return moment(date).format("DD/MM/YYYY");
     },
     logoutUser() {
       sessionStorage.removeItem("token");
@@ -95,8 +96,8 @@ export default {
     },
     async authenticateUser() {
       await authenticate({
-        nickname: "admin",
-        password: "arretadas123",
+        nickname: "Alberto",
+        password: "alberto123",
       })
         .then((response) => {
           this.token = response.data.token;
@@ -116,7 +117,7 @@ export default {
           (response) =>
             (this.alerts = response.data.map((el) => {
               return {
-                date: moment(el.date).format("DD-MM-YYYY"),
+                date: this.customFormatterDate(el.date),
                 district: el.district,
               };
             }))
@@ -130,8 +131,9 @@ export default {
           (response) =>
             (this.complaints = response.data.map((el) => {
               return {
-                date: moment(el.date).format("DD-MM-YYYY"),
+                date: this.customFormatterDate(el.date),
                 district: el.district,
+                typeComplaint: el.type_complaint.toString(),
               };
             }))
         )
@@ -155,14 +157,22 @@ export default {
         return;
       }
 
+      if (this.finalDate < this.initialDate) {
+        this.errors.push("Favor informar data final maior que data inicial!");
+        return;
+      }
+
       const dates = {
-        init: this.customFormatter(this.initialDate),
-        final: this.customFormatter(this.finalDate),
+        init: moment(this.initialDate).format("YYYY-MM-DD"),
+        final: moment(this.finalDate).format("YYYY-MM-DD"),
       };
 
       this.selectedType === "Alertas"
         ? this.getAlerts(dates)
         : this.getComplaints(dates);
+    },
+    cleaner() {
+      (this.initialDate = ""), (this.finalDate = ""), (this.selectedType = "");
     },
   },
 };
@@ -205,7 +215,7 @@ export default {
 .buttom {
   margin: 1rem;
   display: flex;
-  justify-content: center;
+  justify-content: space-evenly;
 }
 
 .showMap {
