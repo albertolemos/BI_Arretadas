@@ -192,7 +192,7 @@ export default {
 }
 
 .mb-4 {
-  margin-bottom: 100px;
+  margin-top: 1em;
 }
 
 .datepicker {
