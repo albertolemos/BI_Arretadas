@@ -52,6 +52,40 @@
       <br />
       <small>* Campos obrigatórios</small>
     </div>
+
+    <div class="container-chart">
+      <div class="mt-5">
+        <div class="chart-alerts" v-if="alerts.length > 0">
+          <h3>Alertas</h3>
+          <bar-chart
+            label="Alertas"
+            :chartdata="chartdata"
+            :options="options"
+          />
+          <doughnut-chart
+            label="Por Bairro"
+            :chartdata="chartdata"
+            :options="options"
+          />
+        </div>
+      </div>
+
+      <div class="mt-5">
+        <div class="chart-complaints" v-if="complaints.length > 0">
+          <h3>Denúncias</h3>
+          <bar-chart
+            label="Denúncias"
+            :chartdata="chartdata"
+            :options="options"
+          />
+          <doughnut-chart
+            label="Por Bairro"
+            :chartdata="chartdata"
+            :options="options"
+          />
+        </div>
+      </div>
+    </div>
   </v-container>
 </template>
 
@@ -60,11 +94,15 @@ import Datepicker from "vuejs-datepicker";
 import { ptBR } from "vuejs-datepicker/dist/locale";
 import moment from "moment";
 import { authenticate } from "@/services/authentication";
+import BarChart from "./BarChart.vue";
+import DoughnutChart from "./DoughnutChart.vue";
 
 export default {
   name: "numberCases",
   components: {
     Datepicker,
+    BarChart,
+    DoughnutChart,
   },
   data() {
     return {
@@ -81,19 +119,27 @@ export default {
   },
 
   async mounted() {
+    this.renderChart(this.chartdata, this.options);
     this.token = sessionStorage.getItem("token");
     if (!this.token) {
       this.authenticateUser();
     }
   },
+
   methods: {
     customFormatterDate(date) {
       return moment(date).format("DD/MM/YYYY");
     },
+
+    customFormatterDateDayMonth(date) {
+      return moment(date).format("DD/MM");
+    },
+
     logoutUser() {
       sessionStorage.removeItem("token");
       this.authenticateUser();
     },
+
     async authenticateUser() {
       await authenticate({
         nickname: "Alberto",
@@ -107,38 +153,43 @@ export default {
           sessionStorage.setItem("token", `Bearer ${this.token}`);
         })
         .catch(() =>
-          this.errors.push("Erro ao tentar realizar autenticação do usuário")
+          this.errors.push(
+            "Erro ao tentar realizar autenticação do usuário. Atualize a página."
+          )
         );
     },
+
     async getAlerts(date) {
       await this.$api
         .get(`/alert?init=${date.init}&final=${date.final}`)
         .then(
           (response) =>
-            (this.alerts = response.data.map((el) => {
+            (this.alerts = response.data.map((element) => {
               return {
-                date: this.customFormatterDate(el.date),
-                district: el.district,
+                date: this.customFormatterDateDayMonth(element.date),
+                district: element.district,
               };
             }))
         )
         .catch(() => this.logoutUser());
     },
+
     async getComplaints(date) {
       await this.$api
         .get(`/complaint?init=${date.init}&final=${date.final}`)
         .then(
           (response) =>
-            (this.complaints = response.data.map((el) => {
+            (this.complaints = response.data.map((element) => {
               return {
-                date: this.customFormatterDate(el.date),
-                district: el.district,
-                typeComplaint: el.type_complaint.toString(),
+                date: this.customFormatterDateDayMonth(element.date),
+                district: element.district,
+                typeComplaint: element.type_complaint.toString(),
               };
             }))
         )
         .catch(() => this.logoutUser());
     },
+
     search() {
       this.errors = [];
 
@@ -171,6 +222,7 @@ export default {
         ? this.getAlerts(dates)
         : this.getComplaints(dates);
     },
+
     cleaner() {
       (this.initialDate = ""), (this.finalDate = ""), (this.selectedType = "");
     },
@@ -226,5 +278,13 @@ export default {
 
 .showChart {
   padding-top: 3em;
+}
+
+.chart-alerts {
+  margin: 3em auto 3em auto;
+}
+
+.chart-complaints {
+  margin: 2em auto 3em auto;
 }
 </style>
