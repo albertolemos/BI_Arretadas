@@ -4,7 +4,18 @@ import { Bar } from "vue-chartjs";
 export default {
   extends: Bar,
 
-  data: () => ({
+  props: {
+    chartdata: {
+      type: Object,
+      default: null,
+    },
+    options: {
+      type: Object,
+      default: null,
+    },
+  },
+
+  /* data: () => ({
     chartdata: {
       labels: [
         "01/08",
@@ -28,7 +39,7 @@ export default {
       responsive: true,
       maintainAspectRatio: false,
     },
-  }),
+  }), */
 
   mounted() {
     this.renderChart(this.chartdata, this.options);
