@@ -10,7 +10,7 @@ export default {
       datasets: [
         {
           label: "Alertas",
-          backgroundColor: ["#94D1BE", "#DAFFEF", "#3B413C"],
+          backgroundColor: ["#94D1BE", "#DAFFEF", "#689689"],
           data: [15, 5, 9],
         },
       ],
