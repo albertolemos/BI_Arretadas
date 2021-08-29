@@ -54,14 +54,17 @@
     </div>
 
     <div class="container-chart">
-      <div class="mt-5">
-        <div class="chart-alerts" v-if="alerts.length > 0">
-          <h3>Alertas</h3>
+      <div class="chart-alerts" v-if="isLoadedAlert && alerts.length > 0">
+        <h2>Por Data</h2>
+        <div class="bar-chart">
           <bar-chart
             label="Alertas"
             :chartdata="chartdata"
             :options="options"
           />
+        </div>
+        <h2>Por Bairro</h2>
+        <div class="doughnu-chart">
           <doughnut-chart
             label="Por Bairro"
             :chartdata="chartdata"
@@ -70,14 +73,17 @@
         </div>
       </div>
 
-      <div class="mt-5">
-        <div class="chart-complaints" v-if="complaints.length > 0">
-          <h3>Denúncias</h3>
+      <div class="chart-complaints" v-if="isLoadedComplaint">
+        <h2>Por Data</h2>
+        <div class="bar-chart">
           <bar-chart
             label="Denúncias"
             :chartdata="chartdata"
             :options="options"
           />
+        </div>
+        <h2>Por Bairro</h2>
+        <div class="doughnu-chart">
           <doughnut-chart
             label="Por Bairro"
             :chartdata="chartdata"
@@ -115,13 +121,19 @@ export default {
       alerts: [],
       complaints: [],
       errors: [],
+      isLoadedAlert: false,
+      isLoadedComplaint: false,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+      },
     };
   },
 
   async mounted() {
-    this.renderChart(this.chartdata, this.options);
     this.token = sessionStorage.getItem("token");
-    if (!this.token) {
+
+    if (!this.token || this.token == undefined) {
       this.authenticateUser();
     }
   },
@@ -169,7 +181,9 @@ export default {
                 date: this.customFormatterDateDayMonth(element.date),
                 district: element.district,
               };
-            }))
+            })),
+          (this.isLoadedComplaint = false),
+          (this.isLoadedAlert = true)
         )
         .catch(() => this.logoutUser());
     },
@@ -185,7 +199,9 @@ export default {
                 district: element.district,
                 typeComplaint: element.type_complaint.toString(),
               };
-            }))
+            })),
+          (this.isLoadedComplaint = true),
+          (this.isLoadedAlert = false)
         )
         .catch(() => this.logoutUser());
     },
@@ -286,5 +302,19 @@ export default {
 
 .chart-complaints {
   margin: 2em auto 3em auto;
+}
+
+.bar-chart {
+  margin: 2em auto 3em auto;
+  border: solid 1px #555;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+  -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+}
+
+.doughnu-chart {
+  margin: 2em auto 3em auto;
+  border: solid 1px #555;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+  -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
 }
 </style>
