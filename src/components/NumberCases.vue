@@ -59,16 +59,13 @@
         <div class="bar-chart">
           <bar-chart
             label="Alertas"
-            :chartdata="chartdata"
-            :options="options"
           />
         </div>
         <h2>Por Bairro</h2>
         <div class="doughnu-chart">
           <doughnut-chart
             label="Por Bairro"
-            :chartdata="chartdata"
-            :options="options"
+            :dados="doughnutData"
           />
         </div>
       </div>
@@ -78,16 +75,13 @@
         <div class="bar-chart">
           <bar-chart
             label="Denúncias"
-            :chartdata="chartdata"
-            :options="options"
           />
         </div>
         <h2>Por Bairro</h2>
         <div class="doughnu-chart">
           <doughnut-chart
             label="Por Bairro"
-            :chartdata="chartdata"
-            :options="options"
+            :dados="doughnutData"
           />
         </div>
       </div>
@@ -96,6 +90,8 @@
 </template>
 
 <script>
+/* eslint-disable no-debugger */
+
 import Datepicker from "vuejs-datepicker";
 import { ptBR } from "vuejs-datepicker/dist/locale";
 import moment from "moment";
@@ -118,6 +114,7 @@ export default {
       token: "",
       selectedType: "",
       types: ["Alertas", "Denúncias"],
+      doughnutData: {},
       alerts: [],
       complaints: [],
       errors: [],
@@ -175,15 +172,22 @@ export default {
       await this.$api
         .get(`/alert?init=${date.init}&final=${date.final}`)
         .then(
-          (response) =>
-            (this.alerts = response.data.map((element) => {
+          (response) =>{
+            this.alerts = response.data.map((element) => {
               return {
                 date: this.customFormatterDateDayMonth(element.date),
                 district: element.district,
               };
-            })),
-          (this.isLoadedComplaint = false),
-          (this.isLoadedAlert = true)
+            })
+            response.data.forEach(alert => {
+              if (!this.doughnutData.hasOwnProperty(alert.district)) {
+                this.doughnutData[alert.district] = 1
+              }
+              this.doughnutData[alert.district] += 1
+            })
+            this.isLoadedComplaint = false
+            this.isLoadedAlert = true
+          }
         )
         .catch(() => this.logoutUser());
     },
