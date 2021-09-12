@@ -5,33 +5,17 @@ export default {
   extends: Bar,
 
   props: {
-    chartdata: {
-      type: Object,
-      default: null,
-    },
-    options: {
-      type: Object,
-      default: null,
-    },
+    dados: Object
   },
 
-  /* data: () => ({
+  data: () => ({
     chartdata: {
-      labels: [
-        "01/08",
-        "02/08",
-        "03/08",
-        "04/08",
-        "05/08",
-        "06/08",
-        "07/08",
-        "08/08",
-      ],
+      labels: [],
       datasets: [
         {
-          label: "Dia",
-          backgroundColor: "#689689",
-          data: [1, 4, 5, 4, 5, 3, 3, 4],
+          label: "Alertas",
+          backgroundColor: [],
+          data: [],
         },
       ],
     },
@@ -39,7 +23,26 @@ export default {
       responsive: true,
       maintainAspectRatio: false,
     },
-  }), */
+  }),
+  created() {
+    this.chartdata.labels = Object.keys(this.$props.dados)
+
+    this.chartdata.labels.forEach(l => {
+      let hex = ''
+      let temp = ''
+      for (let index = 0; index < l.length; index++) {
+        temp = Number(l.charCodeAt(index).toString(16)) 
+        if (!isNaN(temp) && hex.length < 6)
+          hex += ''+temp
+      }
+      temp = ''
+      if(hex.length <= 6)
+        this.chartdata.datasets[0].backgroundColor.push(`#${hex}`)
+      hex = ''
+    })
+
+    this.chartdata.datasets[0].data = Object.values(this.$props.dados)
+  },
 
   mounted() {
     this.renderChart(this.chartdata, this.options);

@@ -59,6 +59,7 @@
         <div class="bar-chart">
           <bar-chart
             label="Alertas"
+            :dados="doughnutData"
           />
         </div>
         <h2>Por Bairro</h2>
@@ -75,6 +76,7 @@
         <div class="bar-chart">
           <bar-chart
             label="Denúncias"
+            :dados="doughnutData"
           />
         </div>
         <h2>Por Bairro</h2>
