@@ -57,33 +57,36 @@
       <div class="chart-alerts" v-if="isLoadedAlert && alerts.length > 0">
         <h2>Por Data</h2>
         <div class="bar-chart">
-          <bar-chart
-            label="Alertas"
-            :dados="doughnutData"
-          />
+          <bar-chart label="Alertas" :dados="chartsData" :key="alerts.length" />
         </div>
         <h2>Por Bairro</h2>
         <div class="doughnu-chart">
           <doughnut-chart
             label="Por Bairro"
-            :dados="doughnutData"
+            :dados="chartsData"
+            :key="alerts.length"
           />
         </div>
       </div>
 
-      <div class="chart-complaints" v-if="isLoadedComplaint">
+      <div
+        class="chart-complaints"
+        v-if="!isLoadedAlert && complaints.length > 0"
+      >
         <h2>Por Data</h2>
         <div class="bar-chart">
           <bar-chart
             label="Denúncias"
-            :dados="doughnutData"
+            :dados="chartsData"
+            :key="complaints.length"
           />
         </div>
         <h2>Por Bairro</h2>
         <div class="doughnu-chart">
           <doughnut-chart
             label="Por Bairro"
-            :dados="doughnutData"
+            :dados="chartsData"
+            :key="complaints.length"
           />
         </div>
       </div>
@@ -92,8 +95,6 @@
 </template>
 
 <script>
-/* eslint-disable no-debugger */
-
 import Datepicker from "vuejs-datepicker";
 import { ptBR } from "vuejs-datepicker/dist/locale";
 import moment from "moment";
@@ -116,7 +117,7 @@ export default {
       token: "",
       selectedType: "",
       types: ["Alertas", "Denúncias"],
-      doughnutData: {},
+      chartsData: {},
       alerts: [],
       complaints: [],
       errors: [],
@@ -171,44 +172,47 @@ export default {
     },
 
     async getAlerts(date) {
+      this.chartsData = {};
       await this.$api
         .get(`/alert?init=${date.init}&final=${date.final}`)
-        .then(
-          (response) =>{
-            this.alerts = response.data.map((element) => {
-              return {
-                date: this.customFormatterDateDayMonth(element.date),
-                district: element.district,
-              };
-            })
-            response.data.forEach(alert => {
-              if (!this.doughnutData.hasOwnProperty(alert.district)) {
-                this.doughnutData[alert.district] = 1
-              }
-              this.doughnutData[alert.district] += 1
-            })
-            this.isLoadedComplaint = false
-            this.isLoadedAlert = true
-          }
-        )
+        .then((response) => {
+          this.alerts = response.data.map((element) => {
+            return {
+              date: this.customFormatterDateDayMonth(element.date),
+              district: element.district,
+            };
+          });
+          response.data.forEach((alert) => {
+            if (!this.chartsData.hasOwnProperty(alert.district)) {
+              this.chartsData[alert.district] = 0;
+            }
+            this.chartsData[alert.district] += 1;
+          });
+          this.isLoadedAlert = true;
+        })
         .catch(() => this.logoutUser());
     },
 
     async getComplaints(date) {
+      this.chartsData = {};
       await this.$api
         .get(`/complaint?init=${date.init}&final=${date.final}`)
-        .then(
-          (response) =>
-            (this.complaints = response.data.map((element) => {
-              return {
-                date: this.customFormatterDateDayMonth(element.date),
-                district: element.district,
-                typeComplaint: element.type_complaint.toString(),
-              };
-            })),
-          (this.isLoadedComplaint = true),
-          (this.isLoadedAlert = false)
-        )
+        .then((response) => {
+          this.complaints = response.data.map((element) => {
+            return {
+              date: this.customFormatterDateDayMonth(element.date),
+              district: element.district,
+              typeComplaint: element.type_complaint.toString(),
+            };
+          });
+          response.data.forEach((alert) => {
+            if (!this.chartsData.hasOwnProperty(alert.district)) {
+              this.chartsData[alert.district] = 0;
+            }
+            this.chartsData[alert.district] += 1;
+          });
+          this.isLoadedAlert = false;
+        })
         .catch(() => this.logoutUser());
     },
 
@@ -246,7 +250,11 @@ export default {
     },
 
     cleaner() {
-      (this.initialDate = ""), (this.finalDate = ""), (this.selectedType = "");
+      this.initialDate = "";
+      this.finalDate = "";
+      this.selectedType = "";
+      this.alerts = [];
+      this.complaints = [];
     },
   },
 };
