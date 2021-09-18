@@ -237,8 +237,8 @@ export default {
       this.initialDate = "";
       this.finalDate = "";
       this.selectedType = "";
-      this.alerts = [];
-      this.complaints = [];
+      this.isLoadedAlert = false;
+      this.isLoadedComplaint = false;
     },
   },
 };
