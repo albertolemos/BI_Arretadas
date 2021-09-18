@@ -89,7 +89,9 @@ As seguintes ferramentas foram usadas na construção do projeto:
 
 <table>
   <tr>
-    <td align="center"><a href="https://github.com/albertolemos"><img style="border-radius: 50%;" src="https://avatars.githubusercontent.com/u/51492348?v=4" width="100px;" alt=""/><br /><sub><b>Alberto Lemos</b></sub></a><br /><a href="https://github.com/albertolemos" title="alberto lemos">👨‍🚀</a>
+    <td align="center"><a href="https://github.com/albertolemos"><img style="border-radius: 50%;" src="https://avatars.githubusercontent.com/u/51492348?v=4" width="100px;"           alt=""/><br /><sub><b>Alberto Lemos</b></sub></a><br /><a href="https://github.com/albertolemos" title="Alberto Lemos">👨‍🚀</a>
+    </td>
+    <td align="center"><a href="https://github.com/victoorraphael"><img style="border-radius: 50%;" src="https://avatars.githubusercontent.com/u/56162733?v=4" width="100px;"           alt=""/><br /><sub><b>Victor Raphael</b></sub></a><br /><a href="https://github.com/victoorraphael" title="Victor Raphael">👨‍🚀</a>
     </td>
   </tr>
 </table>
