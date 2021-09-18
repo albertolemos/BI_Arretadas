@@ -54,39 +54,40 @@
     </div>
 
     <div class="container-chart">
-      <div class="chart-alerts" v-if="isLoadedAlert && alerts.length > 0">
+      <div class="chart-alerts" v-if="isLoadedAlert">
         <h2>Por Data</h2>
         <div class="bar-chart">
-          <bar-chart label="Alertas" :dados="chartsData" :key="alerts.length" />
+          <bar-chart
+            label="Alertas"
+            :dados="alertsByDates"
+            :key="alertsByDates.__ob__.dep.id"
+          />
         </div>
         <h2>Por Bairro</h2>
         <div class="doughnu-chart">
           <doughnut-chart
             label="Por Bairro"
-            :dados="chartsData"
-            :key="alerts.length"
+            :dados="alertsByDistricts"
+            :key="alertsByDistricts.__ob__.dep.id"
           />
         </div>
       </div>
 
-      <div
-        class="chart-complaints"
-        v-if="!isLoadedAlert && complaints.length > 0"
-      >
+      <div class="chart-complaints" v-if="isLoadedComplaint">
         <h2>Por Data</h2>
         <div class="bar-chart">
           <bar-chart
             label="Denúncias"
-            :dados="chartsData"
-            :key="complaints.length"
+            :dados="complaintsByDates"
+            :key="complaintsByDates.__ob__.dep.id"
           />
         </div>
         <h2>Por Bairro</h2>
         <div class="doughnu-chart">
           <doughnut-chart
             label="Por Bairro"
-            :dados="chartsData"
-            :key="complaints.length"
+            :dados="complaintsByDistricts"
+            :key="complaintsByDistricts.__ob__.dep.id"
           />
         </div>
       </div>
@@ -118,8 +119,10 @@ export default {
       selectedType: "",
       types: ["Alertas", "Denúncias"],
       chartsData: {},
-      alerts: [],
-      complaints: [],
+      alertsByDates: {},
+      alertsByDistricts: {},
+      complaintsByDates: {},
+      complaintsByDistricts: {},
       errors: [],
       isLoadedAlert: false,
       isLoadedComplaint: false,
@@ -176,18 +179,8 @@ export default {
       await this.$api
         .get(`/alert?init=${date.init}&final=${date.final}`)
         .then((response) => {
-          this.alerts = response.data.map((element) => {
-            return {
-              date: this.customFormatterDateDayMonth(element.date),
-              district: element.district,
-            };
-          });
-          response.data.forEach((alert) => {
-            if (!this.chartsData.hasOwnProperty(alert.district)) {
-              this.chartsData[alert.district] = 0;
-            }
-            this.chartsData[alert.district] += 1;
-          });
+          this.alertsByDates = response.data.Date;
+          this.alertsByDistricts = response.data.District;
           this.isLoadedAlert = true;
         })
         .catch(() => this.logoutUser());
@@ -198,20 +191,11 @@ export default {
       await this.$api
         .get(`/complaint?init=${date.init}&final=${date.final}`)
         .then((response) => {
-          this.complaints = response.data.map((element) => {
-            return {
-              date: this.customFormatterDateDayMonth(element.date),
-              district: element.district,
-              typeComplaint: element.type_complaint.toString(),
-            };
-          });
-          response.data.forEach((alert) => {
-            if (!this.chartsData.hasOwnProperty(alert.district)) {
-              this.chartsData[alert.district] = 0;
-            }
-            this.chartsData[alert.district] += 1;
-          });
-          this.isLoadedAlert = false;
+          // this.complaintsByDates = response.data.Date;
+          // this.complaintsByDistricts = response.data.District;
+          // eslint-disable-next-line no-console
+          console.log(response.data);
+          this.isLoadedComplaint = true;
         })
         .catch(() => this.logoutUser());
     },
