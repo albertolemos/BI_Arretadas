@@ -4,7 +4,7 @@ import { Doughnut } from "vue-chartjs";
 export default {
   extends: Doughnut,
   props: {
-    dados: Object
+    dados: Object,
   },
 
   data: () => ({
@@ -25,23 +25,16 @@ export default {
   }),
 
   created() {
-    this.chartdata.labels = Object.keys(this.$props.dados)
+    this.chartdata.labels = Object.keys(this.$props.dados);
 
-    this.chartdata.labels.forEach(l => {
-      let hex = ''
-      let temp = ''
-      for (let index = 0; index < l.length; index++) {
-        temp = Number(l.charCodeAt(index).toString(16)) 
-        if (!isNaN(temp) && hex.length < 6)
-          hex += ''+temp
-      }
-      temp = ''
-      if(hex.length <= 6)
-        this.chartdata.datasets[0].backgroundColor.push(`#${hex}`)
-      hex = ''
+    function cor() {
+      return "#E" + parseInt(Math.random() * 0xfffff).toString(16).padStart(5, "0") 
+    }
+    this.chartdata.labels.forEach(() => {
+     this.chartdata.datasets[0].backgroundColor.push(cor());
     })
 
-    this.chartdata.datasets[0].data = Object.values(this.$props.dados)
+    this.chartdata.datasets[0].data = Object.values(this.$props.dados);
   },
 
   mounted() {

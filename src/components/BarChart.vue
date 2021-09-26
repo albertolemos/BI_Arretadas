@@ -13,8 +13,10 @@ export default {
       labels: [],
       datasets: [
         {
-          label: "Número de casos",
+          label: "",
           backgroundColor: [],
+          borderColor: "rgba(0, 0, 0, 0.5)",
+          borderWidth: 1,
           data: [],
         },
       ],
@@ -22,23 +24,27 @@ export default {
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+        },
+      },
     },
   }),
 
   created() {
     this.chartdata.labels = Object.keys(this.$props.dados);
 
-    this.chartdata.labels.forEach((l) => {
-      let hex = "";
-      let temp = "";
-      for (let index = 0; index < l.length; index++) {
-        temp = Number(l.charCodeAt(index).toString(16));
-        if (!isNaN(temp) && hex.length < 6) hex += "" + temp;
-      }
-      temp = "";
-      if (hex.length <= 6)
-        this.chartdata.datasets[0].backgroundColor.push(`#${hex}`);
-      hex = "";
+    const cor = () => {
+      let r = parseInt(Math.random() * 255);
+      let g = parseInt(Math.random() * 255);
+      let b = parseInt(Math.random() * 255);
+
+      return `rgba(${r}, ${g}, ${b}, 0.5)`;
+    };
+
+    this.chartdata.labels.forEach(() => {
+      this.chartdata.datasets[0].backgroundColor.push(cor());
     });
 
     this.chartdata.datasets[0].data = Object.values(this.$props.dados);
