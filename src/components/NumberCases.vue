@@ -182,6 +182,7 @@ export default {
           this.alertsByDates = response.data.Date;
           this.alertsByDistricts = response.data.District;
           this.isLoadedAlert = true;
+          this.isLoadedComplaint = false;
         })
         .catch(() => this.logoutUser());
     },
@@ -189,13 +190,14 @@ export default {
     async getComplaints(date) {
       this.chartsData = {};
       await this.$api
-        .get(`/complaint?init=${date.init}&final=${date.final}`)
+        .get(`/complaint?init=${date.init}&final=${date.final}&type=all`)
         .then((response) => {
-          // this.complaintsByDates = response.data.Date;
-          // this.complaintsByDistricts = response.data.District;
+          this.complaintsByDates = response.data.Date;
+          this.complaintsByDistricts = response.data.District;
           // eslint-disable-next-line no-console
           console.log(response.data);
           this.isLoadedComplaint = true;
+          this.isLoadedAlert = false;
         })
         .catch(() => this.logoutUser());
     },
