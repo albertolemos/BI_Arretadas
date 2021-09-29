@@ -13,6 +13,7 @@
     "chart.js": "^2.7.2",
     "vue": "^2.5.17",
     "vue-chartjs": "^3.5.1",
+    "vue-router": "^3.5.2",
     "vuejs-datepicker": "^1.6.2",
     "vuetify": "^2.4.11"
   },

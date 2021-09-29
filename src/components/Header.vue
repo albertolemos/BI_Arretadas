@@ -1,14 +1,14 @@
 <template>
   <header class="header">
-    <img src="../assets/logo.png" alt="Logo arretadas">
+    <img src="../assets/logo.png" alt="Logo arretadas" />
     <p class="title">Relatórios</p>
   </header>
 </template>
 
 <script>
 export default {
-  name: "ArretadasHeader"
-}
+  name: "Header",
+};
 </script>
 
 <style scoped>
