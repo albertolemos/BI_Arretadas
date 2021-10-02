@@ -11,9 +11,9 @@
 
 <script>
 import vuetify from "../plugins/vuetify";
-import Header from "./Header";
-import NumberCases from "./NumberCases";
-import Footer from "./Footer";
+import Header from "../components/Header";
+import NumberCases from "../components/NumberCases";
+import Footer from "../components/Footer";
 
 export default {
   name: "app",

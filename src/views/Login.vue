@@ -5,14 +5,31 @@
       <div class="col-md-12">
         <div class="login">
           <h2>Login</h2>
-          <input type="text" placeholder=" Usuário" v-model="user" />
-          <br />
-          <input type="password" placeholder=" Senha" v-model="password" />
-          <div v-if="errors.length" class="alert">
-            <div v-for="error in errors" :key="error">
+          <div class="error-alert" v-if="errors.length">
+            <v-alert
+              dense
+              text
+              :icon="mdiExclamation"
+              type="error"
+              v-for="error in errors"
+              :key="error"
+            >
               {{ error }}
-            </div>
+            </v-alert>
           </div>
+          <v-text-field
+            type="text"
+            :rules="rules"
+            placeholder=" Usuário"
+            v-model="user"
+          />
+          <br />
+          <v-text-field
+            type="password"
+            :rules="rules"
+            placeholder=" Senha"
+            v-model="password"
+          />
           <div class="btn-login">
             <v-btn @click="login()" class="button">Entrar</v-btn>
           </div>
@@ -29,9 +46,10 @@
 
 <script>
 import vuetify from "../plugins/vuetify";
-import Header from "./Header";
-import NumberCases from "./NumberCases";
-import Footer from "./Footer";
+import Header from "../components/Header";
+import NumberCases from "../components/NumberCases";
+import Footer from "../components/Footer.vue";
+import { mdiAccount, mdiExclamation } from "@mdi/js";
 
 export default {
   name: "app",
@@ -47,6 +65,13 @@ export default {
       user: "",
       password: "",
       errors: [],
+      userToken: "",
+      mdiAccount,
+      mdiExclamation,
+      rules: [
+        (value) => !!value || "Obrigatório.",
+        (value) => (value || "").length >= 5 || "Min. 5 caracteres",
+      ],
     };
   },
 
@@ -64,8 +89,22 @@ export default {
       }
 
       if (this.errors.length == 0) {
-        this.$router.replace("/");
+        this.authenticateUser()
+          .then(() => this.$router.replace("/"))
+          .catch(() =>
+            this.errors.push("Usuário e/ou senha inválido(s). Tente novamente!")
+          );
       }
+    },
+
+    async authenticateUser() {
+      await this.$api
+        .post("/userAdm/authenticate", {
+          name: this.user,
+          password: this.password,
+        })
+        .then((response) => (this.userToken = response.data.token))
+        .then(() => sessionStorage.setItem("userToken", this.userToken));
     },
   },
 };
@@ -99,13 +138,6 @@ input {
   margin-top: 2em;
   display: flex;
   justify-content: space-evenly;
-}
-
-.alert {
-  font-size: 20px;
-  font-weight: bold;
-  margin-top: 1em;
-  text-align: left;
 }
 
 p {
