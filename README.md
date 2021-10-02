@@ -46,10 +46,10 @@ Além disso, é bom ter um editor para trabalhar com o código, como o [VSCode](
 
 ```bash
 # Clone este repositório
-$ git clone <https://github.com/albertolemos/Arretadas-Relatorios-Web.git>
+$ git clone <https://github.com/DataLabIFPE/BI_Arretadas.git>
 
 # Acesse a pasta do projeto no terminal/cmd
-$ cd Arretadas-Relatorios-Web
+$ cd BI_Arretadas
 
 # Instale as dependências
 $ npm i
@@ -57,7 +57,7 @@ $ npm i
 # Execute a aplicação em modo de desenvolvimento
 $ npm run serve
 
-# O servidor inciará na porta: 8080 - acesse <https://localhost:8080>
+# O servidor inciará na porta: 8080 - acesse <http://localhost:8080>
 ```
 
 
