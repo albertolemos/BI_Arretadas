@@ -317,4 +317,24 @@ export default {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
   -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
 }
+
+@media only screen and (max-width: 800px) {
+  .items-center {
+    width: 80vw;
+    padding: 1rem 0rem;
+  }
+
+  .datepicker {
+    font-size: 15px;
+    width: 50vw;
+  }
+
+  .flex {
+    display: grid;
+  }
+
+  strong {
+    font-size: 15px;
+  }
+}
 </style>

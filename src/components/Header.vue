@@ -23,9 +23,16 @@ export default {
 .title {
   font-size: 2.5rem;
   color: #fff;
+  
 }
 
 img {
   height: 70px;
+}
+
+@media only screen and (max-width: 800px) {
+  .header {
+    padding: 1rem 3rem;
+  }
 }
 </style>
