@@ -1,6 +1,18 @@
 <template>
   <v-container>
     <div class="container">
+      <div class="error-alert" v-if="errors.length">
+        <v-alert
+          dense
+          text
+          :icon="mdiExclamation"
+          type="error"
+          v-for="error in errors"
+          :key="error"
+        >
+          {{ error }}
+        </v-alert>
+      </div>
       <div class="flex">
         <div class="flex items-center">
           <strong class="date"> Período: </strong>
@@ -39,11 +51,11 @@
         label="Tipo de ocorrência*"
       ></v-combobox>
 
-      <div v-if="errors.length">
+      <!-- <div v-if="errors.length">
         <p v-for="error in errors" :key="error">
           <strong>{{ error }} </strong>
         </p>
-      </div>
+      </div> -->
 
       <div class="buttom">
         <v-btn @click="search()">Buscar</v-btn>
@@ -102,6 +114,7 @@ import moment from "moment";
 import { authenticate } from "@/services/authentication";
 import BarChart from "./BarChart.vue";
 import DoughnutChart from "./DoughnutChart.vue";
+import { mdiExclamation } from "@mdi/js";
 
 export default {
   name: "numberCases",
@@ -116,8 +129,10 @@ export default {
       initialDate: "",
       finalDate: "",
       token: "",
+      userToken: "",
       selectedType: "",
       types: ["Alertas", "Denúncias"],
+      mdiExclamation,
       chartsData: {},
       alertsByDates: {},
       alertsByDistricts: {},
@@ -134,11 +149,14 @@ export default {
   },
 
   async mounted() {
+    this.userToken = sessionStorage.getItem("userToken");
+
+    if (!this.userToken || this.token == undefined)
+      this.$router.replace("/login");
+
     this.token = sessionStorage.getItem("token");
 
-    if (!this.token || this.token == undefined) {
-      this.authenticateUser();
-    }
+    if (!this.token || this.token == undefined) this.authenticateUser();
   },
 
   methods: {
@@ -194,8 +212,6 @@ export default {
         .then((response) => {
           this.complaintsByDates = response.data.Date;
           this.complaintsByDistricts = response.data.District;
-          // eslint-disable-next-line no-console
-          console.log(response.data);
           this.isLoadedComplaint = true;
           this.isLoadedAlert = false;
         })
@@ -236,6 +252,7 @@ export default {
     },
 
     cleaner() {
+      this.errors = [];
       this.initialDate = "";
       this.finalDate = "";
       this.selectedType = "";
@@ -247,6 +264,10 @@ export default {
 </script>
 
 <style scoped>
+.error-alert {
+  display: flex;
+  justify-content: space-evenly;
+}
 .container {
   display: grid;
   justify-content: center;

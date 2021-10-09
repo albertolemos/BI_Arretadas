@@ -9,6 +9,7 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
+    "@mdi/js": "^6.1.95",
     "axios": "^0.21.1",
     "chart.js": "^2.7.2",
     "vue": "^2.5.17",
