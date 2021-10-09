@@ -48,4 +48,13 @@ export default {
   margin-right: 5px;
   margin-left: 5px;
 }
+
+@media only screen and (max-width: 480px) {
+  .subheading {
+    font-size: 18px;
+  }
+  .white--text {
+    font-size: 8px;
+  }
+}
 </style>
