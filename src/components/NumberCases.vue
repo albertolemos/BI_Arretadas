@@ -45,17 +45,20 @@
       <br />
 
       <v-combobox
-        class="mb-4"
+        class="type-of-occurrence"
         v-model="selectedType"
         :items="types"
         label="Tipo de ocorrência*"
       ></v-combobox>
 
-      <!-- <div v-if="errors.length">
-        <p v-for="error in errors" :key="error">
-          <strong>{{ error }} </strong>
-        </p>
-      </div> -->
+      <v-combobox
+        multiple
+        v-if="selectedType == 'Denúncias'"
+        class="type-complaint"
+        v-model="selectedTypeComplaint"
+        :items="typesComplaints"
+        label="Tipo de denúncia*"
+      ></v-combobox>
 
       <div class="buttom">
         <v-btn @click="search()">Buscar</v-btn>
@@ -102,6 +105,14 @@
             :key="complaintsByDistricts.__ob__.dep.id"
           />
         </div>
+        <h2>Por Tipo</h2>
+        <div class="doughnu-chart">
+          <doughnut-chart
+            label="Por Tipo"
+            :dados="complaintsByTypes"
+            :key="complaintsByDistricts.__ob__.dep.id"
+          />
+        </div>
       </div>
     </div>
   </v-container>
@@ -132,12 +143,23 @@ export default {
       userToken: "",
       selectedType: "",
       types: ["Alertas", "Denúncias"],
+      selectedTypeComplaint: [],
+      typesComplaints: [
+        "Todas",
+        "Física",
+        "Moral",
+        "Sexual",
+        "Patrimonial",
+        "Psicológica",
+        "Verbal",
+      ],
       mdiExclamation,
       chartsData: {},
       alertsByDates: {},
       alertsByDistricts: {},
       complaintsByDates: {},
       complaintsByDistricts: {},
+      complaintsByTypes: {},
       errors: [],
       isLoadedAlert: false,
       isLoadedComplaint: false,
@@ -193,7 +215,6 @@ export default {
     },
 
     async getAlerts(date) {
-      this.chartsData = {};
       await this.$api
         .get(`/alert?init=${date.init}&final=${date.final}`)
         .then((response) => {
@@ -206,12 +227,16 @@ export default {
     },
 
     async getComplaints(date) {
-      this.chartsData = {};
+      const type =
+        this.selectedTypeComplaint == "Todas"
+          ? "all"
+          : this.selectedTypeComplaint;
       await this.$api
-        .get(`/complaint?init=${date.init}&final=${date.final}&type=all`)
+        .get(`/complaint?init=${date.init}&final=${date.final}&type=${type}`)
         .then((response) => {
           this.complaintsByDates = response.data.Date;
           this.complaintsByDistricts = response.data.District;
+          this.complaintsByTypes = response.data.Type;
           this.isLoadedComplaint = true;
           this.isLoadedAlert = false;
         })
@@ -280,10 +305,6 @@ export default {
   align-items: center;
 }
 
-.mb-4 {
-  margin-top: 1em;
-}
-
 .datepicker {
   margin-left: 10px;
   margin-right: 10px;
@@ -339,15 +360,30 @@ export default {
   -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
 }
 
-@media only screen and (max-width: 800px) {
+@media only screen and (max-width: 765px) {
   .items-center {
-    width: 80vw;
-    padding: 1rem 0rem;
+    padding: 1rem 0 1rem 0;
+  }
+
+  .items-center strong {
+    display: none;
   }
 
   .datepicker {
     font-size: 15px;
-    width: 50vw;
+    width: 75vw;
+  }
+
+  .type-of-occurrence {
+    margin: -1rem 0 0 0.75rem;
+    align-content: center;
+    width: 75vw;
+  }
+
+  .type-complaint {
+    margin: 0 0 0 0.75rem;
+    align-content: center;
+    width: 75vw;
   }
 
   .flex {
