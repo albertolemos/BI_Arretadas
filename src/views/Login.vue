@@ -17,19 +17,25 @@
               {{ error }}
             </v-alert>
           </div>
-          <v-text-field
-            type="text"
-            :rules="rules"
-            placeholder=" Usuário"
-            v-model="user"
-          />
-          <br />
-          <v-text-field
-            type="password"
-            :rules="rules"
-            placeholder=" Senha"
-            v-model="password"
-          />
+          <div class="inputs">
+            <div class="inputUser">
+              <v-text-field
+                type="text"
+                :rules="rules"
+                placeholder=" Usuário"
+                v-model="user"
+              />
+            </div>
+            <div class="inputPassword">
+              <v-text-field
+                type="password"
+                :rules="rules"
+                placeholder=" Senha"
+                v-model="password"
+                v-on:keyup.enter="login()"
+              />
+            </div>
+          </div>
           <div class="btn-login">
             <v-btn @click="login()" class="button">Entrar</v-btn>
           </div>
@@ -112,8 +118,8 @@ export default {
 
 <style scoped>
 .login {
-  margin-top: 2em;
-  margin-bottom: 2em;
+  /* margin-top: 1em;
+  margin-bottom: 1em; */
   width: 100%;
   height: 100%vh;
   display: grid;
@@ -122,20 +128,12 @@ export default {
 }
 
 h2 {
-  margin-top: 0.5em;
-  margin-bottom: 3em;
-}
-
-input {
-  margin: 5px;
-  width: 100%;
-  border-top: none;
-  border-bottom: solid 1px;
-  outline: none;
+  margin-top: 1em;
+  margin-bottom: 1.5em;
 }
 
 .btn-login {
-  margin-top: 2em;
+  margin-top: 1em;
   display: flex;
   justify-content: space-evenly;
 }
@@ -159,6 +157,12 @@ p a {
     padding: 1rem 2rem;
     width: 104%;
   }
+
+  .inputs {
+    margin: -1rem auto 2rem auto;
+    width: 95%;
+  }
+
   .row {
     width: 103%;
     height: 100%vh;

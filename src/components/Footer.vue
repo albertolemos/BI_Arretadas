@@ -54,7 +54,16 @@ export default {
     font-size: 18px;
   }
   .white--text {
-    font-size: 8px;
+    font-size: 11px;
+  }
+}
+
+@media only screen and (max-width: 375px) {
+  .subheading {
+    font-size: 15px;
+  }
+  .white--text {
+    font-size: 50%;
   }
 }
 </style>
