@@ -149,22 +149,4 @@ p a {
   text-decoration: underline;
   cursor: pointer;
 }
-
-@media only screen and (max-width: 800px) {
-  input {
-    font-size: 15px;
-    width: 95%;
-  }
-  .login {
-    padding: 1rem 2rem;
-    width: 104%;
-  }
-
-  .row {
-   
-    width: 103%;
-    height: 100%vh;
-    display: grid;
-  }
-}
 </style>
