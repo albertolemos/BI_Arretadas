@@ -3,10 +3,10 @@
     <div class="container">
       <div class="error-alert" v-if="errors.length">
         <v-alert
-          dense
-          text
-          :icon="mdiExclamation"
           type="error"
+          elevation="8"
+          outlined
+          dense
           v-for="error in errors"
           :key="error"
         >
@@ -18,6 +18,10 @@
           <strong class="date"> Período: </strong>
           <div class="datepicker">
             <datepicker
+              typeable="true"
+              calendar-button="true"
+              clear-button="true"
+              full-month-name="true"
               placeholder="Data Inicial*"
               v-model="initialDate"
               :format="customFormatterDate"
@@ -32,6 +36,10 @@
           <strong>Até</strong>
           <div class="datepicker">
             <datepicker
+              typeable="true"
+              calendar-button="true"
+              clear-button="true"
+              full-month-name="true"
               placeholder="Data Final*"
               v-model="finalDate"
               :format="customFormatterDate"
@@ -125,7 +133,6 @@ import moment from "moment";
 import { authenticate } from "@/services/authentication";
 import BarChart from "./BarChart.vue";
 import DoughnutChart from "./DoughnutChart.vue";
-import { mdiExclamation } from "@mdi/js";
 
 export default {
   name: "numberCases",
@@ -153,7 +160,6 @@ export default {
         "Psicológica",
         "Verbal",
       ],
-      mdiExclamation,
       chartsData: {},
       alertsByDates: {},
       alertsByDistricts: {},
@@ -246,18 +252,26 @@ export default {
     search() {
       this.errors = [];
 
-      if (this.initialDate === "") {
-        this.errors.push("Favor preencher o campo data inicial!");
+      if (!this.initialDate) {
+        this.errors.push("Favor preencher o campo Data Inicial!");
         return;
       }
 
-      if (this.finalDate === "") {
-        this.errors.push("Favor preencher o campo data final!");
+      if (!this.finalDate) {
+        this.errors.push("Favor preencher o campo Data Final!");
         return;
       }
 
-      if (this.selectedType === "") {
-        this.errors.push("Favor escolher o tipo de ocorrência!");
+      if (!this.selectedType) {
+        this.errors.push("Favor escolher o Tipo de ocorrência!");
+        return;
+      }
+
+      if (
+        this.selectedType == "Denúncias" &&
+        this.selectedTypeComplaint.length == 0
+      ) {
+        this.errors.push("Favor escolher o Tipo de denúncia!");
         return;
       }
 
