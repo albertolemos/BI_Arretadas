@@ -7,10 +7,10 @@
           <h2>Login</h2>
           <div class="error-alert" v-if="errors.length">
             <v-alert
-              dense
-              text
-              :icon="mdiExclamation"
               type="error"
+              elevation="8"
+              outlined
+              dense
               v-for="error in errors"
               :key="error"
             >
@@ -20,17 +20,20 @@
           <div class="inputs">
             <div class="inputUser">
               <v-text-field
-                type="text"
+                :prepend-inner-icon="mdiAccount"
+                type="email"
                 :rules="rules"
-                placeholder=" Usuário"
+                placeholder="Usuário"
                 v-model="user"
+                v-on:keyup.enter="login()"
               />
             </div>
             <div class="inputPassword">
               <v-text-field
+                :prepend-inner-icon="mdiLockOutline"
                 type="password"
                 :rules="rules"
-                placeholder=" Senha"
+                placeholder="Senha"
                 v-model="password"
                 v-on:keyup.enter="login()"
               />
@@ -55,7 +58,7 @@ import vuetify from "../plugins/vuetify";
 import Header from "../components/Header";
 import NumberCases from "../components/NumberCases";
 import Footer from "../components/Footer.vue";
-import { mdiAccount, mdiExclamation } from "@mdi/js";
+import { mdiExclamation, mdiAccount, mdiLockOutline, mdiClose } from "@mdi/js";
 
 export default {
   name: "app",
@@ -72,8 +75,10 @@ export default {
       password: "",
       errors: [],
       userToken: "",
-      mdiAccount,
       mdiExclamation,
+      mdiAccount,
+      mdiLockOutline,
+      mdiClose,
       rules: [
         (value) => !!value || "Obrigatório.",
         (value) => (value || "").length >= 5 || "Min. 5 caracteres",
@@ -84,13 +89,13 @@ export default {
   methods: {
     login() {
       this.errors = [];
-      if (this.user === "") {
-        this.errors.push("Favor preencher o campo Usuário!");
+      if (!this.user) {
+        this.errors.push("Favor preencher o campo Usuário.");
         return;
       }
 
-      if (this.password === "") {
-        this.errors.push("Favor preencher o campo Senha!");
+      if (!this.password) {
+        this.errors.push("Favor preencher o campo Senha.");
         return;
       }
 
