@@ -5,7 +5,16 @@
       <h2>Pesquisar</h2>
       <v-card-text style="height: 100px; position: absolute">
         <v-fab-transition>
-          <v-btn color="#00d1b2" dark absolute top right fab @click="logout()">
+          <v-btn
+            title="Sair"
+            color="#00d1b2"
+            dark
+            absolute
+            top
+            right
+            fab
+            @click="logout()"
+          >
             <v-icon color="#fff">mdi-logout</v-icon>
           </v-btn>
         </v-fab-transition>
