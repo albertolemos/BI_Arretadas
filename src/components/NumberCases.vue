@@ -18,10 +18,9 @@
           <strong class="date"> Período: </strong>
           <div class="datepicker">
             <datepicker
-              typeable="true"
-              calendar-button="true"
-              clear-button="true"
-              full-month-name="true"
+              :calendar-button="true"
+              :clear-button="true"
+              :full-month-name="true"
               placeholder="Data Inicial*"
               v-model="initialDate"
               :format="customFormatterDate"
@@ -36,10 +35,9 @@
           <strong>Até</strong>
           <div class="datepicker">
             <datepicker
-              typeable="true"
-              calendar-button="true"
-              clear-button="true"
-              full-month-name="true"
+              :calendar-button="true"
+              :clear-button="true"
+              :full-month-name="true"
               placeholder="Data Final*"
               v-model="finalDate"
               :format="customFormatterDate"
