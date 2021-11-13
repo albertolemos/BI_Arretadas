@@ -129,6 +129,7 @@ import Datepicker from "vuejs-datepicker";
 import { ptBR } from "vuejs-datepicker/dist/locale";
 import moment from "moment";
 import { authenticate } from "@/services/authentication";
+import { validate } from "@/services/validationToken";
 import BarChart from "./BarChart.vue";
 import DoughnutChart from "./DoughnutChart.vue";
 
@@ -146,6 +147,7 @@ export default {
       finalDate: "",
       token: "",
       userToken: "",
+      validUserToken: "",
       selectedType: "",
       types: ["Alertas", "Denúncias"],
       selectedTypeComplaint: [],
@@ -174,15 +176,11 @@ export default {
     };
   },
 
-  async mounted() {
+  mounted() {
     this.userToken = sessionStorage.getItem("userToken");
-
-    if (!this.userToken || this.token == undefined)
-      this.$router.replace("/login");
-
     this.token = sessionStorage.getItem("token");
 
-    if (!this.token || this.token == undefined) this.authenticateUser();
+    if (!this.userToken) this.$router.replace("/login");
   },
 
   methods: {
@@ -194,7 +192,13 @@ export default {
       return moment(date).format("DD/MM");
     },
 
-    logoutUser() {
+    async verifyTokenUser(token) {
+      await validate({
+        oldToken: token,
+      }).catch(() => this.$router.replace("/login"));
+    },
+
+    refreshToken() {
       sessionStorage.removeItem("token");
       this.authenticateUser();
     },
@@ -218,6 +222,12 @@ export default {
         );
     },
 
+    logout() {
+      sessionStorage.removeItem("userToken");
+      sessionStorage.removeItem("token");
+      this.$router.replace("/login");
+    },
+
     async getAlerts(date) {
       await this.$api
         .get(`/alert?init=${date.init}&final=${date.final}`)
@@ -227,7 +237,7 @@ export default {
           this.isLoadedAlert = true;
           this.isLoadedComplaint = false;
         })
-        .catch(() => this.logoutUser());
+        .catch(() => this.refreshToken());
     },
 
     async getComplaints(date) {
@@ -244,7 +254,7 @@ export default {
           this.isLoadedComplaint = true;
           this.isLoadedAlert = false;
         })
-        .catch(() => this.logoutUser());
+        .catch(() => this.refreshToken());
     },
 
     search() {
@@ -266,8 +276,8 @@ export default {
       }
 
       if (
-        this.selectedType == "Denúncias" &&
-        this.selectedTypeComplaint.length == 0
+        this.selectedType === "Denúncias" &&
+        this.selectedTypeComplaint.length === 0
       ) {
         this.errors.push("Favor escolher o Tipo de denúncia!");
         return;
@@ -277,6 +287,14 @@ export default {
         this.errors.push("Favor informar data final maior que data inicial!");
         return;
       }
+
+      if (this.errors.length === 0 && !this.token) {
+        this.authenticateUser();
+      }
+
+      this.userToken = sessionStorage.getItem("userToken");
+
+      !this.userToken ? this.logout() : this.verifyTokenUser(this.userToken);
 
       const dates = {
         init: moment(this.initialDate).format("YYYY-MM-DD"),

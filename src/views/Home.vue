@@ -30,6 +30,7 @@ import vuetify from "../plugins/vuetify";
 import Header from "../components/Header";
 import NumberCases from "../components/NumberCases";
 import Footer from "../components/Footer";
+import { validate } from "@/services/validationToken";
 
 import { mdiLogout } from "@mdi/js";
 import "@mdi/font/css/materialdesignicons.css";
@@ -47,7 +48,25 @@ export default {
     },
   },
 
+  data() {
+    return {
+      userToken: "",
+    };
+  },
+
+  mounted() {
+    this.userToken = sessionStorage.getItem("userToken");
+
+    !this.userToken ? this.logout() : this.verifyTokenUser(this.userToken);
+  },
+
   methods: {
+    async verifyTokenUser(token) {
+      await validate({
+        oldToken: token,
+      }).catch(() => this.logout());
+    },
+
     logout() {
       sessionStorage.removeItem("userToken");
       sessionStorage.removeItem("token");
