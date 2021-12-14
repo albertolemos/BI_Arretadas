@@ -30,11 +30,12 @@
             </div>
             <div class="inputPassword">
               <v-text-field
-                :prepend-inner-icon="mdiLockOutline"
-                type="password"
-                :rules="rules"
-                placeholder="Senha"
                 v-model="password"
+                :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                :rules="rules"
+                :type="showPassword ? 'text' : 'password'"
+                @click:append="showPassword = !showPassword"
+                placeholder="Senha"
                 v-on:keyup.enter="login()"
               />
             </div>
@@ -73,6 +74,7 @@ export default {
     return {
       user: "",
       password: "",
+      showPassword: false,
       errors: [],
       userToken: "",
       mdiExclamation,
