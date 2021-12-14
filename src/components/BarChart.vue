@@ -25,9 +25,11 @@ export default {
       responsive: true,
       maintainAspectRatio: false,
       scales: {
-        y: {
-          beginAtZero: true,
-        },
+        yAxes: [{
+          ticks: {
+            beginAtZero: true,
+          }
+        }],
       },
     },
   }),
