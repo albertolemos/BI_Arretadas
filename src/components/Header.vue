@@ -13,11 +13,12 @@ export default {
 
 <style scoped>
 .header {
-  background-color: #00d1b2;
-  padding: 1rem 10rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  background-color: #00d1b2;
+  padding: 1rem 10rem;
+  width: 100%;
 }
 
 .title {

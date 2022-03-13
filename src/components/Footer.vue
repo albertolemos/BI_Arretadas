@@ -36,7 +36,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff !important;
+  color: #fff;
 }
 
 .white--text strong {
