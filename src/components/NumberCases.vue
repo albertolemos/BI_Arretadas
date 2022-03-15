@@ -67,8 +67,8 @@
       ></v-combobox>
 
       <div class="buttom">
-        <v-btn @click="search()">Buscar</v-btn>
-        <v-btn @click="cleaner()">Limpar</v-btn>
+        <v-btn @click="search">Buscar</v-btn>
+        <v-btn @click="cleaner">Limpar</v-btn>
       </div>
       <br />
       <small>* Campos obrigatórios</small>
@@ -129,9 +129,9 @@ import Datepicker from "vuejs-datepicker";
 import { ptBR } from "vuejs-datepicker/dist/locale";
 import moment from "moment";
 import { authenticate } from "@/services/authentication";
-import { validate } from "@/services/validationToken";
 import BarChart from "./BarChart.vue";
 import DoughnutChart from "./DoughnutChart.vue";
+import { logoutUser } from '../services/logout';
 
 export default {
   name: "numberCases",
@@ -192,12 +192,6 @@ export default {
       return moment(date).format("DD/MM");
     },
 
-    async verifyTokenUser(token) {
-      await validate({
-        oldToken: token,
-      }).catch(() => this.$router.replace("/login"));
-    },
-
     refreshToken() {
       sessionStorage.removeItem("token");
       this.authenticateUser();
@@ -208,23 +202,22 @@ export default {
         nickname: "Alberto",
         password: "alberto123",
       })
-        .then((response) => {
-          this.token = response.data.token;
-          this.$api.defaults.headers.common[
-            "Authorization"
-          ] = `Bearer ${this.token}`;
-          sessionStorage.setItem("token", `Bearer ${this.token}`);
-        })
-        .catch(() =>
-          this.errors.push(
-            "Erro ao tentar realizar autenticação do usuário. Atualize a página."
-          )
-        );
+      .then((response) => {
+        this.token = response.data.token;
+        this.$api.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${this.token}`;
+        sessionStorage.setItem("token", `Bearer ${this.token}`);
+      })
+      .catch(() => 
+        this.errors.push(
+          "Erro ao tentar realizar autenticação do usuário. Atualize a página."
+        )
+      );
     },
 
     logout() {
-      sessionStorage.removeItem("userToken");
-      sessionStorage.removeItem("token");
+      logoutUser();
       this.$router.replace("/login");
     },
 
@@ -260,52 +253,29 @@ export default {
     search() {
       this.errors = [];
 
-      if (!this.initialDate) {
-        this.errors.push("Favor preencher o campo Data Inicial!");
+      if (!this.initialDate || !this.finalDate || !this.selectedType) {
+        this.errors.push("Por favor, preencha os campos corretamentes!");
         return;
-      }
-
-      if (!this.finalDate) {
-        this.errors.push("Favor preencher o campo Data Final!");
+      } else if (this.selectedType === "Denúncias" && this.selectedTypeComplaint.length === 0){
+        this.errors.push("Por favor, escolha o Tipo de denúncia!");
         return;
-      }
-
-      if (!this.selectedType) {
-        this.errors.push("Favor escolher o Tipo de ocorrência!");
+      } else if (this.finalDate < this.initialDate) {
+        this.errors.push("Por favor, informe a data final maior que data inicial!");
         return;
-      }
-
-      if (
-        this.selectedType === "Denúncias" &&
-        this.selectedTypeComplaint.length === 0
-      ) {
-        this.errors.push("Favor escolher o Tipo de denúncia!");
-        return;
-      }
-
-      if (this.finalDate < this.initialDate) {
-        this.errors.push("Favor informar data final maior que data inicial!");
-        return;
-      }
-
-      if (this.errors.length === 0 && !this.token) {
+      } else {
         this.authenticateUser();
-      }
 
-      this.userToken = sessionStorage.getItem("userToken");
+        const dates = {
+          init: moment(this.initialDate).format("YYYY-MM-DD"),
+          final: moment(this.finalDate).format("YYYY-MM-DD"),
+        };
 
-      !this.userToken ? this.logout() : this.verifyTokenUser(this.userToken);
-
-      const dates = {
-        init: moment(this.initialDate).format("YYYY-MM-DD"),
-        final: moment(this.finalDate).format("YYYY-MM-DD"),
-      };
-
-      this.selectedType === "Alertas"
-        ? this.getAlerts(dates)
-        : this.getComplaints(dates);
+        this.selectedType === "Alertas"
+          ? this.getAlerts(dates)
+          : this.getComplaints(dates);
+        }
     },
-
+    
     cleaner() {
       this.errors = [];
       this.initialDate = "";

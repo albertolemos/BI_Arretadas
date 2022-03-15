@@ -3,7 +3,7 @@
     <Header />
     <div class="row">
       <div class="col-md-12">
-        <div class="login">
+        <v-form class="login" @submit="login">
           <h1>Login</h1>
           <div class="error-alert" v-if="errors.length">
             <v-alert
@@ -21,7 +21,7 @@
             <div class="inputUser">
               <v-text-field
                 :prepend-inner-icon="mdiAccount"
-                type="email"
+                type="text"
                 :rules="rules"
                 placeholder="Usuário"
                 v-model="user"
@@ -41,13 +41,13 @@
             </div>
           </div>
           <div class="btn-login">
-            <v-btn @click="login" class="button">Entrar</v-btn>
+            <v-btn class="button" type="submit">Entrar</v-btn>
           </div>
           <p>
             Você não tem acesso? Envie um e-mail para
             <a title="Clique no email para copia-lo" @click="copyText"> arretadasapp@gmail.com </a>
           </p>
-        </div>
+        </v-form>
       </div>
     </div>
     <Footer />
@@ -88,21 +88,31 @@ export default {
     };
   },
 
+  mounted(){
+    // Essa rota não pode ser acessada se o usuário estiver em sessão
+    this.userToken = sessionStorage.getItem("userToken");
+    if (this.userToken){
+      this.$router.replace("/");
+    }
+  },
+
   methods: {
-    login() {
+    login(e) {
+      e.preventDefault();
+
       this.errors = [];
       if (!this.user || !this.password) {
-        this.errors.push("Por favor, preencha os campos corretamente!");
+        this.errors.push("Por favor, preencha os campos!");
         return;
-      }
-
-      if (this.errors.length == 0) {
+      }else if (this.user.length < 5 || this.password.length < 5){
+        this.errors.push('Preencha corretamente os campos com pelo menos 5 caracteres!')
+      }else{
         this.authenticateUser()
           .then(() => this.$router.replace("/"))
           .catch(() =>
             this.errors.push("Usuário e/ou senha inválido(s). Tente novamente!")
-          );
-      }
+        );
+      } 
     },
 
     async authenticateUser() {
