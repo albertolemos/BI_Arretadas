@@ -30,13 +30,13 @@ export default {
 
   data() {
     return {
-      userToken: "",
+      token: "",
     };
   },
 
   mounted() {
-    this.userToken = sessionStorage.getItem("userToken");
-    !this.userToken ? this.logout() : this.verifyTokenUser(this.userToken);
+    this.token = sessionStorage.getItem("token");
+    this.verifyTokenUser(this.token);
   },
 
   methods: {

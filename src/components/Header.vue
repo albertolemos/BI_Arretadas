@@ -28,8 +28,8 @@ export default {
   },
 
   mounted() {
-    this.userToken = sessionStorage.getItem("userToken");
-    this.showBtn = this.userToken ? true : false;
+    this.token = sessionStorage.getItem("token");
+    this.showBtn = this.token ? true : false;
   },
 
   methods: {
