@@ -43,7 +43,18 @@
           <div class="btn-login">
             <v-btn class="button" type="submit">Entrar</v-btn>
           </div>
+          
           <p>
+            <v-alert
+              dismissible
+              v-show="showAlert"
+              elevation="8"
+              outlined
+              dense
+              type="success"
+            >
+              Mensagem copiada com sucesso!
+            </v-alert>
             Você não tem acesso? Envie um e-mail para
             <a title="Clique no email para copia-lo" @click="copyText"> arretadasapp@gmail.com </a>
           </p>
@@ -75,6 +86,7 @@ export default {
       user: "",
       password: "",
       showPassword: false,
+      showAlert: false,
       errors: [],
       token: "",
       mdiExclamation,
@@ -131,8 +143,13 @@ export default {
     },
 
     copyText(){
+      this.showAlert = true;
       navigator.clipboard.writeText('arretadasapp@gmail.com');
+      setTimeout(()=> {
+        this.showAlert = false;
+      }, 3000)
     }
+
   },
 };
 </script>
