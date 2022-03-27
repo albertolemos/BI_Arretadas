@@ -17,6 +17,7 @@ import Footer from "../components/Footer";
 import { validate } from "@/services/validationToken";
 
 import "@mdi/font/css/materialdesignicons.css";
+import { logoutUser } from '../services/logout';
 
 export default {
   name: "app",
@@ -46,7 +47,7 @@ export default {
     },
 
     logout() {
-      sessionStorage.removeItem("token");
+      logoutUser();
       this.$router.replace("/login");
     },
   },

@@ -11,6 +11,7 @@
 <script>
 
 import { mdiLogout } from "@mdi/js";
+import { logoutUser } from '../services/logout';
 import "@mdi/font/css/materialdesignicons.css";
 
 export default {
@@ -33,7 +34,7 @@ export default {
 
   methods: {
     logout(){
-      sessionStorage.removeItem("token");
+      logoutUser();
       this.$router.replace("/login");
     }
   }
