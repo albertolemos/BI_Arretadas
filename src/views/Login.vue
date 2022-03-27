@@ -43,7 +43,6 @@
           <div class="btn-login">
             <v-btn class="button" type="submit">Entrar</v-btn>
           </div>
-          
           <p>
             <v-alert
               dismissible
@@ -149,7 +148,6 @@ export default {
         this.showAlert = false;
       }, 3000)
     }
-
   },
 };
 </script>
