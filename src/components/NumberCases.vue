@@ -76,7 +76,7 @@
 
     <div class="container-chart">
       <div class="chart-alerts" v-if="isLoadedAlert">
-        <h2>Por Data</h2>
+        <h2>Por Data (dados em %)</h2>
         <div class="bar-chart">
           <bar-chart
             label="Alertas"
@@ -84,7 +84,7 @@
             :key="alertsByDates.__ob__.dep.id"
           />
         </div>
-        <h2>Por Bairro</h2>
+        <h2>Por Bairro (dados em %)</h2>
         <div class="doughnu-chart">
           <doughnut-chart
             label="Por Bairro"
@@ -95,7 +95,7 @@
       </div>
 
       <div class="chart-complaints" v-if="isLoadedComplaint">
-        <h2>Por Data</h2>
+        <h2>Por Data (dados em %)</h2>
         <div class="bar-chart">
           <bar-chart
             label="Denúncias"
@@ -103,7 +103,7 @@
             :key="complaintsByDates.__ob__.dep.id"
           />
         </div>
-        <h2>Por Bairro</h2>
+        <h2>Por Bairro (dados em %)</h2>
         <div class="doughnu-chart">
           <doughnut-chart
             label="Por Bairro"
@@ -111,7 +111,7 @@
             :key="complaintsByDistricts.__ob__.dep.id"
           />
         </div>
-        <h2>Por Tipo</h2>
+        <h2>Por Tipo (dados em %)</h2>
         <div class="doughnu-chart">
           <doughnut-chart
             label="Por Tipo"
@@ -128,10 +128,8 @@
 import Datepicker from "vuejs-datepicker";
 import { ptBR } from "vuejs-datepicker/dist/locale";
 import moment from "moment";
-import { authenticate } from "@/services/authentication";
 import BarChart from "./BarChart.vue";
 import DoughnutChart from "./DoughnutChart.vue";
-import { logoutUser } from '../services/logout';
 
 export default {
   name: "numberCases",
@@ -146,8 +144,6 @@ export default {
       initialDate: "",
       finalDate: "",
       token: "",
-      userToken: "",
-      validUserToken: "",
       selectedType: "",
       types: ["Alertas", "Denúncias"],
       selectedTypeComplaint: [],
@@ -177,10 +173,7 @@ export default {
   },
 
   mounted() {
-    this.userToken = sessionStorage.getItem("userToken");
-    this.token = sessionStorage.getItem("token");
-
-    if (!this.userToken) this.$router.replace("/login");
+    this.token = sessionStorage.getItem('token')
   },
 
   methods: {
@@ -192,36 +185,15 @@ export default {
       return moment(date).format("DD/MM");
     },
 
-    refreshToken() {
-      sessionStorage.removeItem("token");
-      this.authenticateUser();
-    },
-
-    async authenticateUser() {
-      await authenticate({
-        nickname: "Alberto",
-        password: "alberto123",
-      })
-      .then((response) => {
-        this.token = response.data.token;
-        this.$api.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${this.token}`;
-        sessionStorage.setItem("token", `Bearer ${this.token}`);
-      })
-      .catch(() => 
-        this.errors.push(
-          "Erro ao tentar realizar autenticação do usuário. Atualize a página."
-        )
-      );
-    },
-
     logout() {
-      logoutUser();
+      sessionStorage.removeItem("token");
       this.$router.replace("/login");
     },
 
     async getAlerts(date) {
+      this.$api.defaults.headers.common[
+          "Authorization"
+      ] = `Bearer ${this.token}`;
       await this.$api
         .get(`/alert?init=${date.init}&final=${date.final}`)
         .then((response) => {
@@ -230,14 +202,14 @@ export default {
           this.isLoadedAlert = true;
           this.isLoadedComplaint = false;
         })
-        .catch(() => this.refreshToken());
     },
 
     async getComplaints(date) {
-      const type =
-        this.selectedTypeComplaint == "Todas"
-          ? "all"
-          : this.selectedTypeComplaint;
+      const type = this.selectedTypeComplaint == "Todas" ? "all" : this.selectedTypeComplaint;
+      
+      this.$api.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${this.token}`;
       await this.$api
         .get(`/complaint?init=${date.init}&final=${date.final}&type=${type}`)
         .then((response) => {
@@ -247,7 +219,6 @@ export default {
           this.isLoadedComplaint = true;
           this.isLoadedAlert = false;
         })
-        .catch(() => this.refreshToken());
     },
 
     search() {
@@ -263,8 +234,6 @@ export default {
         this.errors.push("Por favor, informe a data final maior que data inicial!");
         return;
       } else {
-        this.authenticateUser();
-
         const dates = {
           init: moment(this.initialDate).format("YYYY-MM-DD"),
           final: moment(this.finalDate).format("YYYY-MM-DD"),

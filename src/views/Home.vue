@@ -17,7 +17,6 @@ import Footer from "../components/Footer";
 import { validate } from "@/services/validationToken";
 
 import "@mdi/font/css/materialdesignicons.css";
-import { logoutUser } from '../services/logout';
 
 export default {
   name: "app",
@@ -30,13 +29,13 @@ export default {
 
   data() {
     return {
-      userToken: "",
+      token: "",
     };
   },
 
   mounted() {
-    this.userToken = sessionStorage.getItem("userToken");
-    !this.userToken ? this.logout() : this.verifyTokenUser(this.userToken);
+    this.token = sessionStorage.getItem("token");
+    this.verifyTokenUser(this.token);
   },
 
   methods: {
@@ -47,7 +46,7 @@ export default {
     },
 
     logout() {
-      logoutUser();
+      sessionStorage.removeItem("token");
       this.$router.replace("/login");
     },
   },

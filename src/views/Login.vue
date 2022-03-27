@@ -43,7 +43,18 @@
           <div class="btn-login">
             <v-btn class="button" type="submit">Entrar</v-btn>
           </div>
+          
           <p>
+            <v-alert
+              dismissible
+              v-show="showAlert"
+              elevation="8"
+              outlined
+              dense
+              type="success"
+            >
+              Mensagem copiada com sucesso!
+            </v-alert>
             Você não tem acesso? Envie um e-mail para
             <a title="Clique no email para copia-lo" @click="copyText"> arretadasapp@gmail.com </a>
           </p>
@@ -75,23 +86,24 @@ export default {
       user: "",
       password: "",
       showPassword: false,
+      showAlert: false,
       errors: [],
-      userToken: "",
+      token: "",
       mdiExclamation,
       mdiAccount,
       mdiLockOutline,
       mdiClose,
       rules: [
-        (value) => !!value || "Obrigatório.",
-        (value) => (value || "").length >= 5 || "Min. 5 caracteres",
+        value => !!value || "Obrigatório.",
+        value => (value || "").length >= 5 || "Min. 5 caracteres",
       ],
     };
   },
 
   mounted(){
     // Essa rota não pode ser acessada se o usuário estiver em sessão
-    this.userToken = sessionStorage.getItem("userToken");
-    if (this.userToken){
+    this.token = sessionStorage.getItem("token");
+    if (this.token){
       this.$router.replace("/");
     }
   },
@@ -121,13 +133,23 @@ export default {
           name: this.user,
           password: this.password,
         })
-        .then((response) => (this.userToken = response.data.token))
-        .then(() => sessionStorage.setItem("userToken", this.userToken));
+        .then(response => {
+          this.token = response.data.token;
+          this.$api.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${this.token}`;
+        sessionStorage.setItem("token", `${this.token}`);
+      })
     },
 
     copyText(){
+      this.showAlert = true;
       navigator.clipboard.writeText('arretadasapp@gmail.com');
+      setTimeout(()=> {
+        this.showAlert = false;
+      }, 3000)
     }
+
   },
 };
 </script>
