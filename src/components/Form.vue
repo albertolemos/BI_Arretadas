@@ -66,7 +66,7 @@
         ></v-combobox>
 
         <div class="buttom">
-            <v-btn @click="search">Buscar</v-btn>
+            <v-btn @click="search" class="button-s">Buscar</v-btn>
             <v-btn @click="cleaner">Limpar</v-btn>
         </div>
         <br />
@@ -189,6 +189,11 @@ export default {
     margin: 1rem;
     display: flex;
     justify-content: space-evenly;
+}
+
+.button-s{
+    background-color: #00d1b2 !important;
+    color: #FFF !important;
 }
 
 @media only screen and (max-width: 765px) {

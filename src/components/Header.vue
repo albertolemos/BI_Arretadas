@@ -27,13 +27,13 @@ export default {
   },
 
   mounted() {
-    this.token = sessionStorage.getItem("token");
+    this.token = localStorage.getItem("token");
     this.showBtn = this.token ? true : false;
   },
 
   methods: {
     logout(){
-      sessionStorage.removeItem("token");
+      localStorage.removeItem("token");
       this.$router.replace("/login");
     }
   }

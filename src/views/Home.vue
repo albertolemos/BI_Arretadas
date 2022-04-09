@@ -34,7 +34,7 @@ export default {
   },
 
   mounted() {
-    this.token = sessionStorage.getItem("token");
+    this.token = localStorage.getItem("token");
     this.verifyTokenUser(this.token);
   },
 
@@ -46,7 +46,7 @@ export default {
     },
 
     logout() {
-      sessionStorage.removeItem("token");
+      localStorage.removeItem("token");
       this.$router.replace("/login");
     },
   },

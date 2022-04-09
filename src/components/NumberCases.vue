@@ -67,7 +67,7 @@ export default {
   },
 
   mounted() {
-    this.token = sessionStorage.getItem('token')
+    this.token = localStorage.getItem('token')
   },
 
   data() {

@@ -30,6 +30,7 @@
             </div>
             <div class="inputPassword">
               <v-text-field
+                :prepend-inner-icon="mdiLock"
                 v-model="password"
                 :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                 :rules="rules"
@@ -69,7 +70,7 @@ import vuetify from "../plugins/vuetify";
 import Header from "../components/Header";
 import NumberCases from "../components/NumberCases";
 import Footer from "../components/Footer.vue";
-import { mdiExclamation, mdiAccount, mdiLockOutline, mdiClose } from "@mdi/js";
+import { mdiExclamation, mdiAccount, mdiLockOutline, mdiClose, mdiLock } from "@mdi/js";
 
 export default {
   name: "app",
@@ -92,6 +93,7 @@ export default {
       mdiAccount,
       mdiLockOutline,
       mdiClose,
+      mdiLock,
       rules: [
         value => !!value || "Obrigatório.",
         value => (value || "").length >= 5 || "Min. 5 caracteres",
@@ -101,7 +103,7 @@ export default {
 
   mounted(){
     // Essa rota não pode ser acessada se o usuário estiver em sessão
-    this.token = sessionStorage.getItem("token");
+    this.token = localStorage.getItem("token");
     if (this.token){
       this.$router.replace("/");
     }
@@ -137,7 +139,7 @@ export default {
           this.$api.defaults.headers.common[
           "Authorization"
         ] = `Bearer ${this.token}`;
-        sessionStorage.setItem("token", `${this.token}`);
+        localStorage.setItem("token", `${this.token}`);
       })
     },
 
@@ -170,6 +172,11 @@ h1 {
   margin-top: 1em;
   display: flex;
   justify-content: space-evenly;
+}
+
+.button{
+  background-color: #00d1b2 !important;
+  color: #FFF !important;
 }
 
 p {
