@@ -36,7 +36,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff !important;
+  color: #fff;
 }
 
 .white--text strong {
@@ -49,21 +49,12 @@ export default {
   margin-left: 5px;
 }
 
-@media only screen and (max-width: 480px) {
+@media only screen and (max-width: 600px) {
   .subheading {
-    font-size: 18px;
+    font-size: 1.4rem;
   }
   .white--text {
-    font-size: 11px;
-  }
-}
-
-@media only screen and (max-width: 375px) {
-  .subheading {
-    font-size: 15px;
-  }
-  .white--text {
-    font-size: 50%;
+    font-size: 1rem;
   }
 }
 </style>

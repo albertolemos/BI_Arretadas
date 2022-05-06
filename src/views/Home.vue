@@ -3,22 +3,6 @@
     <Header></Header>
     <div class="box">
       <h2>Pesquisar</h2>
-      <v-card-text style="height: 100px; position: absolute">
-        <v-fab-transition>
-          <v-btn
-            title="Sair"
-            color="#00d1b2"
-            dark
-            absolute
-            top
-            right
-            fab
-            @click="logout()"
-          >
-            <v-icon color="#fff">mdi-logout</v-icon>
-          </v-btn>
-        </v-fab-transition>
-      </v-card-text>
       <NumberCases></NumberCases>
     </div>
     <Footer></Footer>
@@ -32,7 +16,6 @@ import NumberCases from "../components/NumberCases";
 import Footer from "../components/Footer";
 import { validate } from "@/services/validationToken";
 
-import { mdiLogout } from "@mdi/js";
 import "@mdi/font/css/materialdesignicons.css";
 
 export default {
@@ -42,22 +25,17 @@ export default {
     Header,
     NumberCases,
     Footer,
-    mdiLogout,
-    icons: {
-      iconFont: "mdi-logout",
-    },
   },
 
   data() {
     return {
-      userToken: "",
+      token: "",
     };
   },
 
   mounted() {
-    this.userToken = sessionStorage.getItem("userToken");
-
-    !this.userToken ? this.logout() : this.verifyTokenUser(this.userToken);
+    this.token = localStorage.getItem("token");
+    this.verifyTokenUser(this.token);
   },
 
   methods: {
@@ -68,12 +46,12 @@ export default {
     },
 
     logout() {
-      sessionStorage.removeItem("userToken");
-      sessionStorage.removeItem("token");
+      localStorage.removeItem("token");
       this.$router.replace("/login");
     },
   },
 };
+
 </script>
 
 <style >
