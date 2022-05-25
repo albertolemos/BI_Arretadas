@@ -105,7 +105,7 @@ export default {
     // Essa rota não pode ser acessada se o usuário estiver em sessão
     this.token = localStorage.getItem("token");
     if (this.token){
-      this.$router.replace("/");
+      this.$router.replace("/home");
     }
   },
 

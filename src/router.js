@@ -8,11 +8,11 @@ Vue.use(VueRouter)
 export default new VueRouter({
     routes: [
         {
-            path: '/',
+            path: '/home',
             component: Home
         },
         {
-            path: '/login',
+            path: '/',
             component: Login
         }
     ],
