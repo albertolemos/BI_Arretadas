@@ -114,14 +114,11 @@ export default {
       e.preventDefault();
 
       this.errors = [];
-      if (!this.user || !this.password) {
-        this.errors.push("Por favor, preencha os campos!");
-        return;
-      }else if (this.user.length < 5 || this.password.length < 5){
+      if (this.user.length < 5 || this.password.length < 5){
         this.errors.push('Preencha corretamente os campos com pelo menos 5 caracteres!')
-      }else{
+      }else {
         this.authenticateUser()
-          .then(() => this.$router.replace("/"))
+          .then(() => this.$router.replace("/home"))
           .catch(() =>
             this.errors.push("Usuário e/ou senha inválido(s). Tente novamente!")
         );

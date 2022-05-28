@@ -31,7 +31,7 @@ export default {
       return "#E" + parseInt(Math.random() * 0xfffff).toString(16).padStart(5, "0") 
     }
     this.chartdata.labels.forEach(() => {
-     this.chartdata.datasets[0].backgroundColor.push(cor());
+      this.chartdata.datasets[0].backgroundColor.push(cor());
     })
 
     this.chartdata.datasets[0].data = Object.values(this.$props.dados);
