@@ -6,6 +6,14 @@
       </v-card-title>
 
       <v-card-text class="white--text">
+        <p v-show="showBtn" class="text-center">
+          Este relatório é de visualização apenas do poder público
+          e somente quem pode compartilhar é a própria gestão pública.
+          A divulgação desses dados fica a cargo de quem divulga.
+        </p>
+      </v-card-text>
+      
+      <v-card-text class="white--text">
         <p>&copy;</p>
         <p>{{ new Date().getFullYear() }}</p>
         <p><strong> Arretadas — IFPE Campus Garanhuns. </strong></p>
@@ -18,11 +26,18 @@
 <script>
 export default {
   name: "Footer",
+  
   data() {
     return {
       icons: ["mdi-facebook", "mdi-twitter", "mdi-linkedin", "mdi-instagram"],
+      showBtn: false
     };
   },
+
+  mounted(){
+    this.token = localStorage.getItem("token");
+    this.showBtn = this.token ? true : false;
+  }
 };
 </script>
 
@@ -44,6 +59,11 @@ export default {
   color: #fff;
 }
 
+.text-center {
+  font-size: 1.2rem;
+  max-width: 50vw;
+}
+
 .white--text p {
   margin-right: 5px;
   margin-left: 5px;
@@ -56,5 +76,10 @@ export default {
   .white--text {
     font-size: 1rem;
   }
+
+  .text-center {
+    max-width: 80vw;
+  }
+
 }
 </style>
