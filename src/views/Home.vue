@@ -35,7 +35,9 @@ export default {
 
   mounted() {
     this.token = localStorage.getItem("token");
-    this.verifyTokenUser(this.token);
+    if (!this.token) {
+      this.logout()
+    }
   },
 
   methods: {
