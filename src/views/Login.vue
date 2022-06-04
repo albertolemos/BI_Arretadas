@@ -66,11 +66,12 @@
 </template>
 
 <script>
+import { mdiExclamation, mdiAccount, mdiLockOutline, mdiClose, mdiLock } from "@mdi/js";
 import vuetify from "../plugins/vuetify";
 import Header from "../components/Header";
 import NumberCases from "../components/NumberCases";
 import Footer from "../components/Footer.vue";
-import { mdiExclamation, mdiAccount, mdiLockOutline, mdiClose, mdiLock } from "@mdi/js";
+import { validate } from "@/services/validationToken";
 
 export default {
   name: "app",
@@ -102,14 +103,19 @@ export default {
   },
 
   mounted(){
-    // Essa rota não pode ser acessada se o usuário estiver em sessão
     this.token = localStorage.getItem("token");
     if (this.token){
-      this.$router.replace("/home");
+      this.verifyTokenUser(this.token);
     }
   },
 
   methods: {
+    async verifyTokenUser(token) {
+      await validate({
+        oldToken: token,
+      }).then(() => this.$router.replace("/home"))
+    },
+
     login(e) {
       e.preventDefault();
 

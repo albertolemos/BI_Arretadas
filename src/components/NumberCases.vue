@@ -66,10 +66,6 @@ export default {
     Form
   },
 
-  mounted() {
-    this.token = localStorage.getItem('token')
-  },
-
   data() {
     return {
       token: "",
@@ -84,10 +80,10 @@ export default {
   },
 
   methods: {
-
     async getAlerts(date) {
+      this.token = localStorage.getItem('token')
       this.$api.defaults.headers.common[
-          "Authorization"
+        "Authorization"
       ] = `Bearer ${this.token}`;
       await this.$api
       .get(`/alert?init=${date.init}&final=${date.final}`)
@@ -96,10 +92,11 @@ export default {
           this.alertsByDistricts = response.data.District;
           this.isLoadedAlert = true;
           this.isLoadedComplaint = false;
-      })
+      }).catch(() => this.logout())
     },
 
     async getComplaints(date, typeComplaint) {
+      this.token = localStorage.getItem('token')
         const type = typeComplaint == "Todas" ? "all" : typeComplaint;
         
         this.$api.defaults.headers.common[
@@ -113,13 +110,18 @@ export default {
             this.complaintsByTypes = response.data.Type;
             this.isLoadedComplaint = true;
             this.isLoadedAlert = false;
-        })
+        }).catch(() => this.logout())
     },
 
     cleanLoading(){
       this.isLoadedAlert = false;
       this.isLoadedComplaint = false;
-    }
+    },
+
+     logout() {
+      localStorage.removeItem("token");
+      this.$router.replace("/");
+    },
   }
 
 };
