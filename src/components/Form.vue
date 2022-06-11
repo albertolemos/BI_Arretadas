@@ -1,17 +1,24 @@
 <template>
     <div class="container">
-        <div class="error-alert" v-if="errors.length">
-            <v-alert
-                type="error"
-                elevation="8"
-                outlined
-                dense
-                v-for="error in errors"
-                :key="error"
-            >
-                {{ error }}
-            </v-alert>
-        </div>
+        <v-snackbar
+        v-model="snackbar"
+        :timeout="timeout"
+        color="success"
+        outlined
+        >
+            {{text}}
+
+            <template v-slot:action="{ attrs }">
+                <v-btn
+                    color="green"
+                    text
+                    v-bind="attrs"
+                    @click="snackbar = false"
+                >
+                    Close
+                </v-btn>
+            </template>
+        </v-snackbar>
         <div class="flex">
             <div class="flex items-center">
                 <strong class="date"> Período: </strong>
@@ -91,6 +98,9 @@ export default {
             initialDate: "",
             finalDate: "",
             selectedType: "",
+            snackbar: false,
+            text: '',
+            timeout: 2000,
             ptBR: ptBR,
             types: ["Alertas", "Denúncias"],
             selectedTypeComplaint: [],
@@ -103,7 +113,6 @@ export default {
                 "Psicológica",
                 "Verbal",
             ],
-            errors: []
         }
     },
     
@@ -117,7 +126,6 @@ export default {
         },
 
         cleaner() {
-            this.errors = [];
             this.initialDate = "";
             this.finalDate = "";
             this.selectedType = "";
@@ -125,16 +133,18 @@ export default {
         },
 
         search() {
-            this.errors = [];
 
             if (!this.initialDate || !this.finalDate || !this.selectedType) {
-                this.errors.push("Por favor, preencha os campos corretamentes!");
+                this.text = "Por favor, preencha os campos corretamentes!";
+                this.snackbar = true;
                 return;
             } else if (this.selectedType === "Denúncias" && this.selectedTypeComplaint.length === 0){
-                this.errors.push("Por favor, escolha o Tipo de denúncia!");
+                this.text = "Por favor, escolha o Tipo de denúncia!";
+                this.snackbar = true;
                 return;
             } else if (this.finalDate < this.initialDate) {
-                this.errors.push("Por favor, informe a data final maior que data inicial!");
+                this.text = "Por favor, informe a data final maior que data inicial!";
+                this.snackbar = true;
                 return;
             } else {
                 const dates = {

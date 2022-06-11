@@ -5,18 +5,25 @@
       <div class="col-md-12">
         <v-form class="login" @submit="login">
           <h1>Login</h1>
-          <div class="error-alert" v-if="errors.length">
-            <v-alert
-              type="error"
-              elevation="8"
-              outlined
-              dense
-              v-for="error in errors"
-              :key="error"
-            >
-              {{ error }}
-            </v-alert>
-          </div>
+          <v-snackbar
+            v-model="snackbar"
+            :timeout="timeout"
+            color="success"
+            outlined
+          >
+            {{ text }}
+  
+            <template v-slot:action="{ attrs }">
+              <v-btn
+                color="green"
+                text
+                v-bind="attrs"
+                @click="snackbar = false"
+              >
+                Close
+              </v-btn>
+            </template>
+          </v-snackbar>
           <div class="inputs">
             <div class="inputUser">
               <v-text-field
@@ -45,16 +52,25 @@
             <v-btn class="button" type="submit">Entrar</v-btn>
           </div>
           <p>
-            <v-alert
-              dismissible
-              v-show="showAlert"
-              elevation="8"
-              outlined
-              dense
-              type="success"
+            <v-snackbar
+            v-model="snackbarCopy"
+            :timeout="timeout"
+            color="success"
+            outlined
             >
               Mensagem copiada com sucesso!
-            </v-alert>
+    
+              <template v-slot:action="{ attrs }">
+                <v-btn
+                  color="green"
+                  text
+                  v-bind="attrs"
+                  @click="snackbarCopy = false"
+                >
+                  Close
+                </v-btn>
+              </template>
+            </v-snackbar>
             Você não tem acesso? Envie um e-mail para
             <a title="Clique no email para copia-lo" @click="copyText"> arretadasapp@gmail.com </a>
           </p>
@@ -86,9 +102,11 @@ export default {
     return {
       user: "",
       password: "",
+      snackbar: false,
+      snackbarCopy: false,
+      text: '',
+      timeout: 2000,
       showPassword: false,
-      showAlert: false,
-      errors: [],
       token: "",
       mdiExclamation,
       mdiAccount,
@@ -119,14 +137,16 @@ export default {
     login(e) {
       e.preventDefault();
 
-      this.errors = [];
       if (this.user.length < 5 || this.password.length < 5){
-        this.errors.push('Preencha corretamente os campos com pelo menos 5 caracteres!')
+        this.text = 'Preencha corretamente os campos com pelo menos 5 caracteres!'
+        this.snackbar = true;
       }else {
         this.authenticateUser()
           .then(() => this.$router.replace("/home"))
-          .catch(() =>
-            this.errors.push("Usuário e/ou senha inválido(s). Tente novamente!")
+          .catch(() => {
+            this.text = 'Usuário e/ou senha inválido(s). Tente novamente!'
+            this.snackbar = true;
+          }
         );
       } 
     },
@@ -147,11 +167,8 @@ export default {
     },
 
     copyText(){
-      this.showAlert = true;
       navigator.clipboard.writeText('arretadasapp@gmail.com');
-      setTimeout(()=> {
-        this.showAlert = false;
-      }, 3000)
+      this.snackbarCopy = true;
     }
   },
 };
