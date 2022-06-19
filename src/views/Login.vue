@@ -30,7 +30,7 @@
             <v-btn class="button" type="submit">Entrar</v-btn>
           </div>
           <p>
-            <v-snackbar v-model="snackbarCopy" :timeout="timeout" color="success" elevation="10" outlined>
+            <v-snackbar v-model="snackbarCopy" :timeout="timeout" color="success" elevation="10" rounded>
               E-mail copiado com sucesso para a área de transferência!
               <template v-slot:action="{ attrs }">
                 <v-btn icon v-bind="attrs" @click="snackbarCopy = false">
