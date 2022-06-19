@@ -1,21 +1,11 @@
 <template>
     <div class="container">
-        <v-snackbar
-        v-model="snackbar"
-        :timeout="timeout"
-        color="success"
-        outlined
-        >
-            {{text}}
+        <v-snackbar v-model="snackbar" :timeout="timeout" color="error" rounded>
+            {{ text }}
 
             <template v-slot:action="{ attrs }">
-                <v-btn
-                    color="green"
-                    text
-                    v-bind="attrs"
-                    @click="snackbar = false"
-                >
-                    Close
+                <v-btn text v-bind="attrs" @click="snackbar = false">
+                    <v-icon>mdi-close</v-icon>
                 </v-btn>
             </template>
         </v-snackbar>
@@ -23,16 +13,9 @@
             <div class="flex items-center">
                 <strong class="date"> Período: </strong>
                 <div class="datepicker">
-                    <datepicker
-                        :calendar-button="true"
-                        :clear-button="true"
-                        :full-month-name="true"
-                        placeholder="Data Inicial*"
-                        v-model="initialDate"
-                        :format="customFormatterDate"
-                        :language="ptBR"
-                        min="0"
-                    >
+                    <datepicker :calendar-button="true" :clear-button="true" :full-month-name="true"
+                        placeholder="Data Inicial*" v-model="initialDate" :format="customFormatterDate" :language="ptBR"
+                        min="0">
                     </datepicker>
                 </div>
             </div>
@@ -40,37 +23,20 @@
             <div class="flex items-center">
                 <strong>Até</strong>
                 <div class="datepicker">
-                    <datepicker
-                    :calendar-button="true"
-                    :clear-button="true"
-                    :full-month-name="true"
-                    placeholder="Data Final*"
-                    v-model="finalDate"
-                    :format="customFormatterDate"
-                    :language="ptBR"
-                    min="0"
-                    >
+                    <datepicker :calendar-button="true" :clear-button="true" :full-month-name="true"
+                        placeholder="Data Final*" v-model="finalDate" :format="customFormatterDate" :language="ptBR"
+                        min="0">
                     </datepicker>
                 </div>
             </div>
         </div>
         <br />
 
-        <v-combobox
-            class="type-of-occurrence"
-            v-model="selectedType"
-            :items="types"
-            label="Tipo de ocorrência*"
-        ></v-combobox>
+        <v-combobox class="type-of-occurrence" v-model="selectedType" :items="types" label="Tipo de ocorrência*">
+        </v-combobox>
 
-        <v-combobox
-            multiple
-            v-if="selectedType == 'Denúncias'"
-            class="type-complaint"
-            v-model="selectedTypeComplaint"
-            :items="typesComplaints"
-            label="Tipo de denúncia*"
-        ></v-combobox>
+        <v-combobox multiple v-if="selectedType == 'Denúncias'" class="type-complaint" v-model="selectedTypeComplaint"
+            :items="typesComplaints" label="Tipo de denúncia*"></v-combobox>
 
         <div class="buttom">
             <v-btn @click="search" class="button-s">Buscar</v-btn>
@@ -92,15 +58,15 @@ export default {
     components: {
         Datepicker
     },
-    
+
     data() {
-        return{
+        return {
             initialDate: "",
             finalDate: "",
             selectedType: "",
             snackbar: false,
-            text: '',
-            timeout: 2000,
+            text: "",
+            timeout: 5000,
             ptBR: ptBR,
             types: ["Alertas", "Denúncias"],
             selectedTypeComplaint: [],
@@ -115,47 +81,46 @@ export default {
             ],
         }
     },
-    
+
     methods: {
         customFormatterDate(date) {
-            return moment(date).format("DD/MM/YYYY");
+            return moment(date).format("DD/MM/YYYY")
         },
 
         customFormatterDateDayMonth(date) {
-            return moment(date).format("DD/MM");
+            return moment(date).format("DD/MM")
         },
 
         cleaner() {
-            this.initialDate = "";
-            this.finalDate = "";
-            this.selectedType = "";
-            this.$emit("my-clean");
+            this.initialDate = ""
+            this.finalDate = ""
+            this.selectedType = ""
+            this.$emit("my-clean")
         },
 
         search() {
-
             if (!this.initialDate || !this.finalDate || !this.selectedType) {
-                this.text = "Por favor, preencha os campos corretamentes!";
-                this.snackbar = true;
-                return;
-            } else if (this.selectedType === "Denúncias" && this.selectedTypeComplaint.length === 0){
-                this.text = "Por favor, escolha o Tipo de denúncia!";
-                this.snackbar = true;
-                return;
+                this.text = "Por favor, preencha os campos corretamentes!"
+                this.snackbar = true
+                return
+            } else if (this.selectedType === "Denúncias" && this.selectedTypeComplaint.length === 0) {
+                this.text = "Por favor, escolha o Tipo de denúncia!"
+                this.snackbar = true
+                return
             } else if (this.finalDate < this.initialDate) {
-                this.text = "Por favor, informe a data final maior que data inicial!";
-                this.snackbar = true;
-                return;
+                this.text = "Por favor, informe a data final maior que data inicial!"
+                this.snackbar = true
+                return
             } else {
                 const dates = {
-                init: moment(this.initialDate).format("YYYY-MM-DD"),
-                final: moment(this.finalDate).format("YYYY-MM-DD"),
-                };
+                    init: moment(this.initialDate).format("YYYY-MM-DD"),
+                    final: moment(this.finalDate).format("YYYY-MM-DD"),
+                }
 
                 this.selectedType === "Alertas"
-                ? this.$emit("my-alerts", dates)
-                : this.$emit("my-complaints", dates, this.selectedTypeComplaint);
-                }
+                    ? this.$emit("my-alerts", dates)
+                    : this.$emit("my-complaints", dates, this.selectedTypeComplaint)
+            }
         },
     }
 }
@@ -166,10 +131,12 @@ export default {
     display: flex;
     justify-content: space-evenly;
 }
+
 .container {
     display: grid;
     justify-content: center;
 }
+
 .flex {
     display: flex;
 }
@@ -201,7 +168,7 @@ export default {
     justify-content: space-evenly;
 }
 
-.button-s{
+.button-s {
     background-color: #00d1b2 !important;
     color: #FFF !important;
 }
