@@ -5,56 +5,39 @@
       <div class="col-md-12">
         <v-form class="login" @submit="login">
           <h1>Login</h1>
-          <div class="error-alert" v-if="errors.length">
-            <v-alert
-              type="error"
-              elevation="8"
-              outlined
-              dense
-              v-for="error in errors"
-              :key="error"
-            >
-              {{ error }}
-            </v-alert>
-          </div>
+          <v-snackbar v-model="snackbar" :timeout="timeout" color="error" rounded>
+            {{ text }}
+
+            <template v-slot:action="{ attrs }">
+              <v-btn icon v-bind="attrs" @click="snackbar = false">
+                <v-icon>mdi-close</v-icon>
+              </v-btn>
+            </template>
+          </v-snackbar>
           <div class="inputs">
             <div class="inputUser">
-              <v-text-field
-                :prepend-inner-icon="mdiAccount"
-                type="text"
-                :rules="rules"
-                placeholder="Usuário"
-                v-model="user"
-                v-on:keyup.enter="login"
-              />
+              <v-text-field :prepend-inner-icon="mdiAccount" type="text" :rules="rules" placeholder="Usuário"
+                v-model="user" v-on:keyup.enter="login" />
             </div>
             <div class="inputPassword">
-              <v-text-field
-                :prepend-inner-icon="mdiLock"
-                v-model="password"
-                :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                :rules="rules"
-                :type="showPassword ? 'text' : 'password'"
-                @click:append="showPassword = !showPassword"
-                placeholder="Senha"
-                v-on:keyup.enter="login"
-              />
+              <v-text-field :prepend-inner-icon="mdiLock" v-model="password"
+                :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" :rules="rules"
+                :type="showPassword ? 'text' : 'password'" @click:append="showPassword = !showPassword"
+                placeholder="Senha" v-on:keyup.enter="login" />
             </div>
           </div>
           <div class="btn-login">
             <v-btn class="button" type="submit">Entrar</v-btn>
           </div>
           <p>
-            <v-alert
-              dismissible
-              v-show="showAlert"
-              elevation="8"
-              outlined
-              dense
-              type="success"
-            >
-              Mensagem copiada com sucesso!
-            </v-alert>
+            <v-snackbar v-model="snackbarCopy" :timeout="timeout" color="success" elevation="10" rounded>
+              E-mail copiado com sucesso para a área de transferência!
+              <template v-slot:action="{ attrs }">
+                <v-btn icon v-bind="attrs" @click="snackbarCopy = false">
+                  <v-icon>mdi-close</v-icon>
+                </v-btn>
+              </template>
+            </v-snackbar>
             Você não tem acesso? Envie um e-mail para
             <a title="Clique no email para copia-lo" @click="copyText"> arretadasapp@gmail.com </a>
           </p>
@@ -66,12 +49,12 @@
 </template>
 
 <script>
-import { mdiExclamation, mdiAccount, mdiLockOutline, mdiClose, mdiLock } from "@mdi/js";
-import vuetify from "../plugins/vuetify";
-import Header from "../components/Header";
-import NumberCases from "../components/NumberCases";
-import Footer from "../components/Footer.vue";
-import { validate } from "@/services/validationToken";
+import { mdiExclamation, mdiAccount, mdiLockOutline, mdiClose, mdiLock } from "@mdi/js"
+import vuetify from "../plugins/vuetify"
+import Header from "../components/Header"
+import NumberCases from "../components/NumberCases"
+import Footer from "../components/Footer.vue"
+import { validate } from "@/services/validationToken"
 
 export default {
   name: "app",
@@ -86,9 +69,11 @@ export default {
     return {
       user: "",
       password: "",
+      snackbar: false,
+      snackbarCopy: false,
+      text: '',
+      timeout: 5000,
       showPassword: false,
-      showAlert: false,
-      errors: [],
       token: "",
       mdiExclamation,
       mdiAccount,
@@ -97,15 +82,15 @@ export default {
       mdiLock,
       rules: [
         value => !!value || "Obrigatório.",
-        value => (value || "").length >= 5 || "Min. 5 caracteres",
+        value => (value || "").length >= 5 || "Mínimo de 5 caracteres.",
       ],
     };
   },
 
-  mounted(){
+  mounted() {
     this.token = localStorage.getItem("token");
-    if (this.token){
-      this.verifyTokenUser(this.token);
+    if (this.token) {
+      this.verifyTokenUser(this.token)
     }
   },
 
@@ -117,18 +102,24 @@ export default {
     },
 
     login(e) {
-      e.preventDefault();
+      e.preventDefault()
+      if (this.snackbarCopy) this.snackbarCopy = false
 
-      this.errors = [];
-      if (this.user.length < 5 || this.password.length < 5){
-        this.errors.push('Preencha corretamente os campos com pelo menos 5 caracteres!')
-      }else {
+      if (this.user.length < 5) {
+        this.text = 'Preencha corretamente o campo Usuário com pelo menos 5 caracteres!'
+        this.snackbar = true
+      } else if (this.password.length < 5) {
+        this.text = 'Preencha corretamente o campo Senha com pelo menos 5 caracteres!'
+        this.snackbar = true
+      }
+      else {
         this.authenticateUser()
           .then(() => this.$router.replace("/home"))
-          .catch(() =>
-            this.errors.push("Usuário e/ou senha inválido(s). Tente novamente!")
-        );
-      } 
+          .catch(() => {
+            this.text = 'Usuário e/ou senha inválido(s). Tente novamente!'
+            this.snackbar = true
+          })
+      }
     },
 
     async authenticateUser() {
@@ -140,18 +131,16 @@ export default {
         .then(response => {
           this.token = response.data.token;
           this.$api.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${this.token}`;
-        localStorage.setItem("token", `${this.token}`);
-      })
+            "Authorization"
+          ] = `Bearer ${this.token}`
+          localStorage.setItem("token", `${this.token}`)
+        })
     },
 
-    copyText(){
-      this.showAlert = true;
-      navigator.clipboard.writeText('arretadasapp@gmail.com');
-      setTimeout(()=> {
-        this.showAlert = false;
-      }, 3000)
+    copyText() {
+      if (this.snackbar) this.snackbar = false
+      navigator.clipboard.writeText('arretadasapp@gmail.com')
+      this.snackbarCopy = true
     }
   },
 };
@@ -177,7 +166,7 @@ h1 {
   justify-content: space-evenly;
 }
 
-.button{
+.button {
   background-color: #00d1b2 !important;
   color: #FFF !important;
 }
@@ -192,12 +181,12 @@ p a {
   cursor: pointer;
 }
 
-.showBtn{
+.showBtn {
   background: red;
 }
 
 
-.hiddenBtn{
+.hiddenBtn {
   background: purple;
 }
 
@@ -206,7 +195,7 @@ p a {
     font-size: 15px;
     width: 95%;
   }
-  
+
   .login {
     padding: 1rem 2rem;
     width: 100%;
