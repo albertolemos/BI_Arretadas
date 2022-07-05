@@ -2,8 +2,9 @@
   <v-container>
     <Form @my-alerts="getAlerts" @my-complaints="getComplaints" @my-clean="cleanLoading"/>
 
+    
     <div class="container-chart">
-      <div class="chart-alerts" v-if="isLoadedAlert">
+      <div class="chart-alerts" v-if="isLoadedAlert && !isEmpty">
         <h2>Por Data (dados em %)</h2>
         <div class="bar-chart">
           <bar-chart
@@ -22,7 +23,7 @@
         </div>
       </div>
 
-      <div class="chart-complaints" v-if="isLoadedComplaint">
+      <div class="chart-complaints" v-if="isLoadedComplaint && !isEmpty">
         <h2>Por Data (dados em %)</h2>
         <div class="bar-chart">
           <bar-chart
@@ -48,6 +49,8 @@
           />
         </div>
       </div>
+
+      <h1 class="mensagem" v-if="isEmpty">Me desculpe, mas não foi localizado nenhum chamado proveniente dessa delimitação de tempo :(</h1>
     </div>
   </v-container>
 </template>
@@ -71,6 +74,7 @@ export default {
       token: "",
       isLoadedAlert: false,
       isLoadedComplaint: false,
+      isEmpty: false,
       alertsByDates: {},
       alertsByDistricts: {},
       complaintsByDates: {},
@@ -92,6 +96,8 @@ export default {
           this.alertsByDistricts = response.data.District;
           this.isLoadedAlert = true;
           this.isLoadedComplaint = false;
+          if(Object.values(this.alertsByDates).length == 0 || Object.values(this.alertsByDistricts).length == 0) this.isEmpty = true;
+          else this.isEmpty = false;
       }).catch(() => this.logout())
     },
 
@@ -110,6 +116,8 @@ export default {
             this.complaintsByTypes = response.data.Type;
             this.isLoadedComplaint = true;
             this.isLoadedAlert = false;
+            if(Object.values(this.complaintsByDates).length == 0 || Object.values(this.complaintsByDistricts).length == 0 || Object.values(this.complaintsByTypes).length == 0) this.isEmpty = true;
+            else this.isEmpty = false;
         }).catch(() => this.logout())
     },
 
@@ -118,7 +126,7 @@ export default {
       this.isLoadedComplaint = false;
     },
 
-     logout() {
+    logout() {
       localStorage.removeItem("token");
       this.$router.replace("/");
     },
@@ -159,5 +167,10 @@ export default {
   border: solid 1px #555;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
   -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+}
+
+.mensagem {
+  font-size: 1.5rem;
+  text-align: center;
 }
 </style>
