@@ -82,6 +82,10 @@ export default {
         }
     },
 
+    created() {
+        this.finalDate = new Date();
+    },
+
     methods: {
         customFormatterDate(date) {
             return moment(date).format("DD/MM/YYYY")
@@ -99,18 +103,19 @@ export default {
         },
 
         search() {
+            this.dataAtual = new Date();
             if (!this.initialDate || !this.finalDate || !this.selectedType) {
                 this.text = "Por favor, preencha os campos corretamentes!"
                 this.snackbar = true
-                return
             } else if (this.selectedType === "Denúncias" && this.selectedTypeComplaint.length === 0) {
                 this.text = "Por favor, escolha o Tipo de denúncia!"
                 this.snackbar = true
-                return
             } else if (this.finalDate < this.initialDate) {
                 this.text = "Por favor, informe a data final maior que data inicial!"
                 this.snackbar = true
-                return
+            } else if(this.finalDate > this.dataAtual) {
+                this.text = "Por favor, a Data final não pode ser maior que data atual!"
+                this.snackbar = true
             } else {
                 const dates = {
                     init: moment(this.initialDate).format("YYYY-MM-DD"),
