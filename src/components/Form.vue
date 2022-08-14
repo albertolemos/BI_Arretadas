@@ -36,7 +36,7 @@
         </v-combobox>
 
         <v-combobox multiple v-if="selectedType == 'Denúncias'" class="type-complaint" v-model="selectedTypeComplaint"
-            :items="typesComplaints" label="Tipo de denúncia*"></v-combobox>
+            :items="computedTypes" label="Tipo de denúncia*"></v-combobox>
 
         <div class="buttom">
             <v-btn @click="search" class="button-s">Buscar</v-btn>
@@ -79,6 +79,14 @@ export default {
                 "Psicológica",
                 "Verbal",
             ],
+        }
+    },
+
+    computed: {
+        computedTypes: {
+            get () {
+                return this.selectedTypeComplaint.indexOf("Todas") != -1 ? ["Todas"] : this.typesComplaints;
+            },
         }
     },
 
