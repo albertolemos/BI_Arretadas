@@ -35,8 +35,14 @@
         <v-combobox class="type-of-occurrence" v-model="selectedType" :items="types" label="Tipo de ocorrência*">
         </v-combobox>
 
-        <v-combobox multiple v-if="selectedType == 'Denúncias'" class="type-complaint" v-model="selectedTypeComplaint"
-            :items="computedTypes" label="Tipo de denúncia*"></v-combobox>
+        <v-combobox multiple v-if="selectedType == 'Denúncias' && !allTypes" class="type-complaint" v-model="selectedTypeComplaint"
+        :items="typesComplaints" label="Tipo de denúncia*"></v-combobox>
+
+        <v-checkbox
+        v-if="selectedType == 'Denúncias'"
+        v-model="allTypes"
+        :label="`Deseja selecionar todas os tipos de denúncias?`"
+        ></v-checkbox>
 
         <div class="buttom">
             <v-btn @click="search" class="button-s">Buscar</v-btn>
@@ -70,8 +76,8 @@ export default {
             ptBR: ptBR,
             types: ["Alertas", "Denúncias"],
             selectedTypeComplaint: [],
+            allTypes: false,
             typesComplaints: [
-                "Todas",
                 "Física",
                 "Moral",
                 "Sexual",
@@ -79,14 +85,6 @@ export default {
                 "Psicológica",
                 "Verbal",
             ],
-        }
-    },
-
-    computed: {
-        computedTypes: {
-            get () {
-                return this.selectedTypeComplaint.indexOf("Todas") != -1 ? ["Todas"] : this.typesComplaints;
-            },
         }
     },
 
@@ -112,6 +110,7 @@ export default {
 
         search() {
             this.dataAtual = new Date();
+            if(this.allTypes) this.selectedTypeComplaint = ["Todas"]
             if (!this.initialDate || !this.finalDate || !this.selectedType) {
                 this.text = "Por favor, preencha os campos corretamentes!"
                 this.snackbar = true
