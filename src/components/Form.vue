@@ -41,7 +41,7 @@
         <v-checkbox
         v-if="selectedType == 'Denúncias'"
         v-model="allTypes"
-        :label="`Deseja selecionar todas os tipos de denúncias?`"
+        :label="`Marque esta opção para selecionar todos os tipos de denúncia.`"
         ></v-checkbox>
 
         <div class="buttom">
