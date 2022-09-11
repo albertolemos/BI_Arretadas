@@ -14,7 +14,7 @@ import vuetify from "../plugins/vuetify";
 import Header from "../components/Header";
 import NumberCases from "../components/NumberCases";
 import Footer from "../components/Footer";
-import { validate } from "@/services/validationToken";
+import { validateToken } from "@/services/validationToken";
 
 import "@mdi/font/css/materialdesignicons.css";
 
@@ -42,7 +42,7 @@ export default {
 
   methods: {
     async verifyTokenUser(token) {
-      await validate({
+      await validateToken({
         oldToken: token,
       }).catch(() => this.logout());
     },

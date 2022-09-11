@@ -54,7 +54,8 @@ import vuetify from "../plugins/vuetify"
 import Header from "../components/Header"
 import NumberCases from "../components/NumberCases"
 import Footer from "../components/Footer.vue"
-import { validate } from "@/services/validationToken"
+import { validateToken } from "@/services/validationToken"
+import { validateLogin } from '../services/validationLogin';
 
 export default {
   name: "app",
@@ -96,22 +97,17 @@ export default {
 
   methods: {
     async verifyTokenUser(token) {
-      await validate({
+      await validateToken({
         oldToken: token,
       }).then(() => this.$router.replace("/home"))
     },
 
     login(e) {
       e.preventDefault()
-      if (this.snackbarCopy) this.snackbarCopy = false
-
-      if (this.user.length < 5) {
-        this.text = 'Preencha corretamente o campo Usuário com pelo menos 5 caracteres!'
-        this.snackbar = true
-      } else if (this.password.length < 5) {
-        this.text = 'Preencha corretamente o campo Senha com pelo menos 5 caracteres!'
-        this.snackbar = true
-      }
+      this.text = validateLogin(this.user, this.password);
+      
+      if(this.snackbarCopy) this.snackbarCopy = false;
+      if(this.text.length >= 1) this.snackbar = true;
       else {
         this.authenticateUser()
           .then(() => this.$router.replace("/home"))
