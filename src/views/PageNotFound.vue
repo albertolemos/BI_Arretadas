@@ -21,8 +21,7 @@ export default {
     vuetify,
 
     data() {
-        return {
-        };
+        return {};
     },
 
     methods: {

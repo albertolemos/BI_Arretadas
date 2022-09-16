@@ -57,6 +57,7 @@
 import { ptBR } from "vuejs-datepicker/dist/locale";
 import Datepicker from "vuejs-datepicker";
 import moment from "moment";
+import { validateSearch } from '../services/validationSearch';
 
 export default {
     name: "Form",
@@ -109,21 +110,10 @@ export default {
         },
 
         search() {
-            this.dataAtual = new Date();
-            if(this.allTypes) this.selectedTypeComplaint = ["Todas"]
-            if (!this.initialDate || !this.finalDate || !this.selectedType) {
-                this.text = "Por favor, preencha os campos corretamentes!"
-                this.snackbar = true
-            } else if (this.selectedType === "Denúncias" && this.selectedTypeComplaint.length === 0) {
-                this.text = "Por favor, escolha o Tipo de denúncia!"
-                this.snackbar = true
-            } else if (this.finalDate < this.initialDate) {
-                this.text = "Por favor, informe a data final maior que data inicial!"
-                this.snackbar = true
-            } else if(this.finalDate > this.dataAtual) {
-                this.text = "Por favor, a Data final não pode ser maior que data atual!"
-                this.snackbar = true
-            } else {
+            if(this.allTypes) this.selectedTypeComplaint = ["Todas"];
+            this.text = validateSearch(this.selectedType, this.selectedTypeComplaint, this.initialDate, this.finalDate);
+            if(this.text.length >= 1) this.snackbar = true;
+            else{
                 const dates = {
                     init: moment(this.initialDate).format("YYYY-MM-DD"),
                     final: moment(this.finalDate).format("YYYY-MM-DD"),
