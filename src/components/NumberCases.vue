@@ -48,6 +48,7 @@
             :key="complaintsByDistricts.__ob__.dep.id"
           />
         </div>
+        <div id="map"></div>
       </div>
 
       <h1 class="mensagem" v-if="isEmpty">Me desculpe, mas não foi localizado nenhum chamado proveniente dessa delimitação de tempo :(</h1>
@@ -59,6 +60,7 @@
 import BarChart from "./BarChart.vue";
 import DoughnutChart from "./DoughnutChart.vue";
 import Form from './Form.vue';
+import callHeatMap from '../services/heatMap'
 
 export default {
   name: "numberCases",
@@ -103,22 +105,23 @@ export default {
 
     async getComplaints(date, typeComplaint) {
       this.token = localStorage.getItem('token')
-        const type = typeComplaint == "Todas" ? "all" : typeComplaint;
-        
-        this.$api.defaults.headers.common[
-        "Authorization"
-        ] = `Bearer ${this.token}`;
-        await this.$api
-        .get(`/complaint?init=${date.init}&final=${date.final}&type=${type}`)
-        .then((response) => {
-            this.complaintsByDates = response.data.Date;
-            this.complaintsByDistricts = response.data.District;
-            this.complaintsByTypes = response.data.Type;
-            this.isLoadedComplaint = true;
-            this.isLoadedAlert = false;
-            if(Object.values(this.complaintsByDates).length == 0 || Object.values(this.complaintsByDistricts).length == 0 || Object.values(this.complaintsByTypes).length == 0) this.isEmpty = true;
-            else this.isEmpty = false;
-        }).catch(() => this.logout())
+      const type = typeComplaint == "Todas" ? "all" : typeComplaint;
+      
+      this.$api.defaults.headers.common[
+      "Authorization"
+      ] = `Bearer ${this.token}`;
+      await this.$api
+      .get(`/complaint?init=${date.init}&final=${date.final}&type=${type}`)
+      .then((response) => {
+          this.complaintsByDates = response.data.Date;
+          this.complaintsByDistricts = response.data.District;
+          this.complaintsByTypes = response.data.Type;
+          this.isLoadedComplaint = true;
+          this.isLoadedAlert = false;
+          if(Object.values(this.complaintsByDates).length == 0 || Object.values(this.complaintsByDistricts).length == 0 || Object.values(this.complaintsByTypes).length == 0) this.isEmpty = true;
+          else this.isEmpty = false;
+          callHeatMap()
+      }).catch(() => this.logout())
     },
 
     cleanLoading(){
@@ -136,6 +139,12 @@ export default {
 </script>
 
 <style scoped>
+
+#map {
+  width: 500px;
+  height: 400px;
+  border: solid 1px black;
+}
 
 .showMap {
   display: grid;
