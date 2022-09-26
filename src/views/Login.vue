@@ -121,8 +121,8 @@ export default {
     async authenticateUser() {
       await this.$api
         .post("/userAdm/authenticate", {
-          name: this.user,
-          password: this.password,
+          name: this.user.trim(),
+          password: this.password.trim(),
         })
         .then(response => {
           this.token = response.data.token;
