@@ -6,7 +6,7 @@ import router from './router'
 import VueGoogleHeatmap from 'vue-google-heatmap';
 
 Vue.use(VueGoogleHeatmap, {
-  apiKey: 'AIzaSyDcjVfd-QY09V7TDv27TaM6Hrt1L_CAmns'
+  apiKey: process.env.VUE_APP_GOOGLE_MAPS_API_KEY
 });
 
 Vue.prototype.$api = api
