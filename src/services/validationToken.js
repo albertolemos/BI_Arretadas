@@ -7,5 +7,5 @@ import api from '../api/index'
  * @returns {Promise}
  */
 export async function validateToken(token) {
-  return await api.post("/user/valid-token", token)
+  return await api.post("/userAdm/valid-token", token)
 }
