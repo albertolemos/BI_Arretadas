@@ -91,7 +91,7 @@ export default {
   mounted() {
     this.token = localStorage.getItem("token");
     if (this.token) {
-      this.verifyTokenUser(this.token)
+      this.$router.replace("/home");
     }
   },
 
