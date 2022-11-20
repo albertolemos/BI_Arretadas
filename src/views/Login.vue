@@ -75,6 +75,7 @@ export default {
       text: '',
       timeout: 5000,
       showPassword: false,
+      city: "",
       token: "",
       mdiExclamation,
       mdiAccount,
@@ -90,6 +91,7 @@ export default {
 
   mounted() {
     this.token = localStorage.getItem("token");
+    this.city = localStorage.getItem("city");
     if (this.token) {
       this.verifyTokenUser(this.token)
     }
@@ -126,9 +128,11 @@ export default {
         })
         .then(response => {
           this.token = response.data.token;
+          this.city = response.data.city;
           this.$api.defaults.headers.common[
             "Authorization"
           ] = `Bearer ${this.token}`
+          localStorage.setItem("city", `${this.city}`)
           localStorage.setItem("token", `${this.token}`)
         })
     },

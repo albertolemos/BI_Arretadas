@@ -72,6 +72,7 @@ export default {
   data() {
     return {
       token: "",
+      city: "",
       isLoadedAlert: false,
       isLoadedComplaint: false,
       isEmpty: false,
@@ -86,11 +87,12 @@ export default {
   methods: {
     async getAlerts(date) {
       this.token = localStorage.getItem('token')
+      this.city = localStorage.getItem('city')
       this.$api.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${this.token}`;
       await this.$api
-      .get(`/alert?init=${date.init}&final=${date.final}`)
+      .get(`/alert?init=${date.init}&final=${date.final}&city=${this.city}`)
       .then((response) => {
           this.alertsByDates = response.data.Date;
           this.alertsByDistricts = response.data.District;
@@ -103,22 +105,23 @@ export default {
 
     async getComplaints(date, typeComplaint) {
       this.token = localStorage.getItem('token')
-        const type = typeComplaint == "Todas" ? "all" : typeComplaint;
-        
-        this.$api.defaults.headers.common[
-        "Authorization"
-        ] = `Bearer ${this.token}`;
-        await this.$api
-        .get(`/complaint?init=${date.init}&final=${date.final}&type=${type}`)
-        .then((response) => {
-            this.complaintsByDates = response.data.Date;
-            this.complaintsByDistricts = response.data.District;
-            this.complaintsByTypes = response.data.Type;
-            this.isLoadedComplaint = true;
-            this.isLoadedAlert = false;
-            if(Object.values(this.complaintsByDates).length == 0 || Object.values(this.complaintsByDistricts).length == 0 || Object.values(this.complaintsByTypes).length == 0) this.isEmpty = true;
-            else this.isEmpty = false;
-        }).catch(() => this.logout())
+      this.city = localStorage.getItem('city')
+      const type = typeComplaint == "Todas" ? "all" : typeComplaint;
+      
+      this.$api.defaults.headers.common[
+      "Authorization"
+      ] = `Bearer ${this.token}`;
+      await this.$api
+      .get(`/complaint?init=${date.init}&final=${date.final}&city=${this.city}&type=${type}`)
+      .then((response) => {
+          this.complaintsByDates = response.data.Date;
+          this.complaintsByDistricts = response.data.District;
+          this.complaintsByTypes = response.data.Type;
+          this.isLoadedComplaint = true;
+          this.isLoadedAlert = false;
+          if(Object.values(this.complaintsByDates).length == 0 || Object.values(this.complaintsByDistricts).length == 0 || Object.values(this.complaintsByTypes).length == 0) this.isEmpty = true;
+          else this.isEmpty = false;
+      }).catch(() => this.logout())
     },
 
     cleanLoading(){

@@ -49,6 +49,7 @@ export default {
 
     logout() {
       localStorage.removeItem("token");
+      localStorage.removeItem("city");
       this.$router.replace("/");
     },
   },
