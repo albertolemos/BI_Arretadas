@@ -7,5 +7,7 @@ import api from '../api/index'
  * @returns {Promise}
  */
 export async function authenticate(user) {
-  return await api.post("/user/authenticate", user)
+  return await api.post("/userAdm/authenticate", user).then((response) => {
+    return response
+  })
 }

@@ -56,6 +56,7 @@ import NumberCases from "../components/NumberCases"
 import Footer from "../components/Footer.vue"
 import { validateToken } from "@/services/validationToken"
 import { validateLogin } from '../services/validationLogin';
+import { authenticate } from '../services/authentication';
 
 export default {
   name: "app",
@@ -92,9 +93,7 @@ export default {
   mounted() {
     this.token = localStorage.getItem("token");
     this.city = localStorage.getItem("city");
-    if (this.token) {
-      this.$router.replace("/home");
-    }
+    if (this.token) this.$router.replace("/home");
   },
 
   methods: {
@@ -111,30 +110,25 @@ export default {
       if(this.snackbarCopy) this.snackbarCopy = false;
       if(this.text.length >= 1) this.snackbar = true;
       else {
-        this.authenticateUser()
-          .then(() => this.$router.replace("/home"))
-          .catch(() => {
-            this.text = 'Usuário e/ou senha inválido(s). Tente novamente!'
-            this.snackbar = true
-          })
-      }
-    },
-
-    async authenticateUser() {
-      await this.$api
-        .post("/userAdm/authenticate", {
+        authenticate({
           name: this.user,
           password: this.password,
         })
-        .then(response => {
+        .then((response) => {
           this.token = response.data.token;
           this.city = response.data.city;
           this.$api.defaults.headers.common[
             "Authorization"
           ] = `Bearer ${this.token}`
-          localStorage.setItem("city", `${this.city}`)
-          localStorage.setItem("token", `${this.token}`)
+          localStorage.setItem("city", `${this.city}`);
+          localStorage.setItem("token", `${this.token}`);
+          this.$router.replace("/home");
         })
+        .catch(() => {
+          this.text = 'Usuário e/ou senha inválido(s). Tente novamente!'
+          this.snackbar = true
+        })
+      }
     },
 
     copyText() {
