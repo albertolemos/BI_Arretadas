@@ -56,6 +56,7 @@
 </template>
 
 <script>
+
 import BarChart from "./BarChart.vue";
 import DoughnutChart from "./DoughnutChart.vue";
 import Form from './Form.vue';
